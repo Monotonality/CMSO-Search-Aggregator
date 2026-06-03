@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Ticket investigation form</title>
+    <link rel="stylesheet" href="/static/ticket-form.css?v=1" />
+  </head>
+  <body>
+    <header class="tf-header">
+      <h1>Ticket investigation form</h1>
+      <p>Fill in each field below. Copy or download as a text file when done.</p>
+    </header>
+
+    <form id="ticket-form" class="tf-form" onsubmit="return false">
+      <div class="tf-field">
+        <label for="field-ticket-id">Ticket ID</label>
+        <input type="text" id="field-ticket-id" autocomplete="off" />
+      </div>
+      <div class="tf-field">
+        <label for="field-client-name">Client name</label>
+        <input type="text" id="field-client-name" autocomplete="off" />
+      </div>
+      <div class="tf-field">
+        <label for="field-client-agency">Client agency</label>
+        <input type="text" id="field-client-agency" autocomplete="off" />
+      </div>
+      <div class="tf-field">
+        <label for="field-reason">Reason for ticket</label>
+        <textarea id="field-reason" rows="4"></textarea>
+      </div>
+      <div class="tf-field">
+        <label for="field-symptoms">Suspected symptoms</label>
+        <textarea id="field-symptoms" rows="4"></textarea>
+      </div>
+      <div class="tf-field">
+        <label for="field-context">Context</label>
+        <textarea id="field-context" rows="4"></textarea>
+      </div>
+      <div class="tf-field">
+        <label for="field-actions">Actions taken</label>
+        <textarea id="field-actions" rows="4"></textarea>
+      </div>
+      <div class="tf-field">
+        <label for="field-next">Next steps</label>
+        <textarea id="field-next" rows="4"></textarea>
+      </div>
+    </form>
+
+    <footer class="tf-actions">
+      <button type="button" id="tf-copy" class="tf-btn tf-btn-primary">Copy to clipboard</button>
+      <button type="button" id="tf-download" class="tf-btn tf-btn-secondary">
+        Download .txt
+      </button>
+      <button type="button" id="tf-close" class="tf-btn tf-btn-ghost">Close</button>
+      <p id="tf-status" class="tf-status" aria-live="polite"></p>
+    </footer>
+
+    <script src="/static/ticket-form.js?v=1"></script>
+  </body>
+</html>

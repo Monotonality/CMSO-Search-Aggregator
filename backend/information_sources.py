@@ -38,6 +38,13 @@ INFORMATION_SOURCES: list[dict[str, Any]] = [
         "enabled": False,
         "description": "Not connected — coming soon",
     },
+    {
+        "id": "salesforce",
+        "label": "Salesforce",
+        "source_type": "salesforce",
+        "enabled": False,
+        "description": "Salesforce — not connected",
+    },
 ]
 
 _SOURCE_BY_ID = {s["id"]: s for s in INFORMATION_SOURCES}

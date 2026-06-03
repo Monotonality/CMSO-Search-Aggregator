@@ -5,6 +5,9 @@ from __future__ import annotations
 import json
 import os
 import re
+import shutil
+import subprocess
+from pathlib import Path
 from typing import Any
 
 import httpx
@@ -22,9 +25,9 @@ def _ollama_base_urls() -> list[str]:
 OLLAMA_BASE = _ollama_base_urls()[0]
 OLLAMA_MODEL = os.environ.get(
     "OLLAMA_VOICE_MODEL",
-    os.environ.get("OLLAMA_MODEL", "tinyllama"),
+    os.environ.get("OLLAMA_MODEL", "gemma4:31b-cloud"),
 )
-OLLAMA_TIMEOUT = float(os.environ.get("OLLAMA_TIMEOUT_SEC", "45"))
+OLLAMA_TIMEOUT = float(os.environ.get("OLLAMA_TIMEOUT_SEC", "120"))
 
 
 def voice_llm_enabled() -> bool:
@@ -165,62 +168,172 @@ def _heuristic_queries(transcript: str, max_queries: int) -> list[str]:
 
 
 def _model_is_pulled(model: str, names: list[str]) -> bool:
-    """True if tags list includes the configured model (with or without :tag)."""
-    base = model.split(":")[0].lower()
+    """True if Ollama's model list includes the configured model name."""
+    want = model.strip().lower()
+    if not want:
+        return False
     for name in names:
-        n = name.lower()
-        if n == model.lower() or n.split(":")[0] == base:
+        n = name.strip().lower()
+        if n == want:
+            return True
+        if ":" in want and (n.startswith(want) or want.startswith(n)):
             return True
     return False
 
 
-async def check_ollama() -> dict[str, Any]:
+def _ollama_cli_list() -> list[str]:
+    """Fallback when /api/tags is empty (common with cloud-only models)."""
+    candidates = [
+        shutil.which("ollama"),
+        str(Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Ollama" / "ollama.exe"),
+        str(Path(os.environ.get("ProgramFiles", "")) / "Ollama" / "ollama.exe"),
+    ]
+    exe = next((p for p in candidates if p and Path(p).is_file()), None)
+    if not exe:
+        return []
+    try:
+        proc = subprocess.run(
+            [exe, "list"],
+            capture_output=True,
+            text=True,
+            timeout=15,
+            check=False,
+        )
+    except (OSError, subprocess.TimeoutExpired):
+        return []
+    if proc.returncode != 0:
+        return []
+    names: list[str] = []
+    for line in proc.stdout.splitlines()[1:]:
+        line = line.strip()
+        if not line:
+            continue
+        # NAME    ID    SIZE    MODIFIED
+        name = line.split()[0] if line.split() else ""
+        if name.upper() != "NAME" and name:
+            names.append(name)
+    return names
+
+
+async def _fetch_ollama_names(client: httpx.AsyncClient, base: str) -> list[str]:
+    names: list[str] = []
+    try:
+        r = await client.get(f"{base}/api/tags")
+        r.raise_for_status()
+        for m in r.json().get("models", []):
+            if m.get("name"):
+                names.append(str(m["name"]))
+    except Exception:
+        pass
+    try:
+        r = await client.get(f"{base}/api/ps")
+        r.raise_for_status()
+        for m in r.json().get("models", []):
+            if m.get("name"):
+                names.append(str(m["name"]))
+    except Exception:
+        pass
+    for n in _ollama_cli_list():
+        names.append(n)
+    seen: set[str] = set()
+    out: list[str] = []
+    for n in names:
+        key = n.lower()
+        if key not in seen:
+            seen.add(key)
+            out.append(n)
+    return out
+
+
+async def _probe_model(client: httpx.AsyncClient, base: str, model: str) -> bool:
+    """True if Ollama recognizes the model (including cloud models)."""
+    try:
+        r = await client.post(
+            f"{base}/api/show",
+            json={"name": model},
+            timeout=20.0,
+        )
+        if r.status_code == 200:
+            return True
+    except Exception:
+        pass
+    return False
+
+
+def _pick_suggested_model(configured: str, names: list[str]) -> str | None:
+    if not names:
+        return None
+    if _model_is_pulled(configured, names):
+        return configured
+    cfg = configured.lower()
+    for n in names:
+        if cfg in n.lower() or n.lower() in cfg:
+            return n
+    for n in names:
+        if "gemma" in n.lower() or "cloud" in n.lower():
+            return n
+    return names[0]
+
+
+async def check_ollama(model: str | None = None) -> dict[str, Any]:
     """Whether Ollama is reachable and which model is configured."""
+    configured = (model or OLLAMA_MODEL).strip()
     if not voice_llm_enabled():
         return {
             "available": False,
             "base_url": OLLAMA_BASE,
-            "model": OLLAMA_MODEL,
+            "model": configured,
             "llm_disabled": True,
             "hint": "VOICE_USE_LLM=0 — using heuristic query extraction only.",
         }
     last_error: str | None = None
     for base in _ollama_base_urls():
         try:
-            async with httpx.AsyncClient(timeout=5.0) as client:
-                r = await client.get(f"{base}/api/tags")
-                r.raise_for_status()
-                body = r.json()
-                names = [
-                    str(m.get("name", ""))
-                    for m in body.get("models", [])
-                    if m.get("name")
-                ]
-                pulled = _model_is_pulled(OLLAMA_MODEL, names)
+            async with httpx.AsyncClient(timeout=25.0) as client:
+                names = await _fetch_ollama_names(client, base)
+                in_list = _model_is_pulled(configured, names)
+                probed = await _probe_model(client, base, configured)
+                ready = in_list or probed
+                suggested = _pick_suggested_model(configured, names)
+                hint: str | None = None
+                if ready:
+                    hint = None
+                elif suggested and suggested != configured:
+                    hint = (
+                        f'Model "{configured}" not found. '
+                        f'Try: set OLLAMA_VOICE_MODEL={suggested} (from ollama list)'
+                    )
+                elif names:
+                    hint = (
+                        f'Model "{configured}" not found. '
+                        f'Available: {", ".join(names[:5])}. '
+                        f"Set OLLAMA_VOICE_MODEL to one of these and restart the backend."
+                    )
+                else:
+                    hint = (
+                        f'Model "{configured}" not verified. '
+                        f"Run `ollama list` in CMD — if it appears, enable "
+                        f'"Use Ollama anyway" below or set OLLAMA_VOICE_MODEL to the exact name.'
+                    )
                 return {
                     "available": True,
                     "base_url": base,
-                    "model": OLLAMA_MODEL,
-                    "models": names[:12],
-                    "model_pulled": pulled,
-                    "hint": (
-                        None
-                        if pulled
-                        else f'Model "{OLLAMA_MODEL}" not found. Run: ollama pull {OLLAMA_MODEL}'
-                    ),
+                    "model": configured,
+                    "models": names[:20],
+                    "model_pulled": in_list,
+                    "model_ready": ready,
+                    "model_probed": probed,
+                    "suggested_model": suggested,
+                    "hint": hint,
                 }
         except Exception as exc:
             last_error = str(exc)
     return {
         "available": False,
         "base_url": OLLAMA_BASE,
-        "model": OLLAMA_MODEL,
+        "model": configured,
         "error": last_error or "Connection refused",
-        "hint": (
-            "Start Ollama, then pull a model. On corporate networks, "
-            "cloudflarestorage.com is often blocked — try personal hotspot, "
-            f"HTTPS_PROXY, or copy models from another PC. Smaller: ollama pull tinyllama"
-        ),
+        "hint": "Start the Ollama app or run `ollama serve`, then `ollama list` to confirm your model name.",
     }
 
 
@@ -229,6 +342,7 @@ async def extract_search_queries(
     *,
     max_queries: int = 2,
     use_llm: bool = True,
+    model: str | None = None,
 ) -> dict[str, Any]:
     """
     Return {"queries": [...], "source": "ollama"|"heuristic", "ollama_error": optional}.
@@ -243,8 +357,9 @@ async def extract_search_queries(
             "source": "heuristic",
         }
 
+    chat_model = (model or OLLAMA_MODEL).strip()
     payload = {
-        "model": OLLAMA_MODEL,
+        "model": chat_model,
         "stream": False,
         "format": "json",
         "messages": [

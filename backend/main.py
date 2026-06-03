@@ -8,7 +8,7 @@ from typing import Any
 
 logger = logging.getLogger("uvicorn.error")
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Query
 from pydantic import BaseModel, Field
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import FileResponse
@@ -62,7 +62,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(
-    title="CMSO Aggregated Troubleshooter",
+    title="CMSO Signal",
     version="3.0.0",
     lifespan=lifespan,
 )
@@ -93,7 +93,7 @@ async def health() -> dict[str, str]:
     return {
         "status": "ok",
         "version": APP_VERSION,
-        "product": "CMSO",
+        "product": "CMSO Signal",
         "index_ready": str(ready and not building),
         "index_building": str(building),
     }
@@ -105,7 +105,7 @@ async def config() -> dict[str, Any]:
     manuals = manual_stats()
     idx = index_stats()
     return {
-        "product": "CMSO",
+        "product": "CMSO Signal",
         "focus": "troubleshooting",
         "data_sources_root": str(DATA_SOURCES.relative_to(ROOT)),
         "kb": kb,
@@ -198,6 +198,7 @@ class VoiceSegmentRequest(BaseModel):
     max_queries: int = Field(2, ge=1, le=3)
     limit_per_query: int = Field(8, ge=1, le=20)
     use_llm: bool = True
+    ollama_model: str | None = None
 
 
 def _search_hits_for_voice(
@@ -222,9 +223,9 @@ def _search_hits_for_voice(
 
 
 @app.get("/api/voice/status")
-async def voice_status() -> dict[str, Any]:
+async def voice_status(model: str | None = Query(None)) -> dict[str, Any]:
     """Ollama availability for local voice query extraction."""
-    status = await check_ollama()
+    status = await check_ollama(model)
     from voice_intent import voice_llm_enabled
 
     status["voice_llm_enabled"] = voice_llm_enabled()
@@ -242,6 +243,7 @@ async def voice_process_segment(body: VoiceSegmentRequest) -> dict[str, Any]:
         body.transcript_segment,
         max_queries=body.max_queries,
         use_llm=body.use_llm,
+        model=body.ollama_model,
     )
     queries: list[str] = intent.get("queries") or []
     segment = body.transcript_segment.strip()

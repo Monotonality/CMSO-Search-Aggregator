@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CMSO Aggregated Troubleshooter</title>
+    <title>CMSO Signal</title>
     <link rel="stylesheet" href="/static/styles.css" />
   </head>
   <body>
@@ -12,7 +12,7 @@
         <div class="topbar-brand">
           <span class="brand-avatar" title="John Doe" aria-label="John Doe">JD</span>
           <div class="brand-text">
-            <span class="brand-title">CMSO Aggregated Troubleshooter</span>
+            <span class="brand-title">CMSO Signal</span>
           </div>
         </div>
         <div class="topbar-meta">
@@ -77,6 +77,12 @@
               >
                 Recheck Ollama
               </button>
+              <label class="voice-model-wrap" id="voice-model-wrap">
+                <span class="control-label">Ollama model</span>
+                <select id="voice-ollama-model" class="voice-ollama-model" aria-label="Ollama model">
+                  <option value="">(default)</option>
+                </select>
+              </label>
               <label class="voice-use-llm-toggle" id="voice-use-llm-wrap">
                 <input type="checkbox" id="voice-use-llm" />
                 <span>Use Ollama for query extraction</span>
@@ -103,11 +109,52 @@
               >
             </div>
             <div class="voice-transcript-wrap">
-              <span class="control-label">Live transcript</span>
-              <p id="voice-transcript" class="voice-transcript" aria-live="polite"></p>
+              <div class="voice-transcript-toolbar">
+                <span class="control-label">Live transcript</span>
+                <button
+                  type="button"
+                  id="voice-history-toggle"
+                  class="btn btn-ghost btn-sm"
+                  aria-expanded="false"
+                  aria-controls="voice-transcript-history"
+                >
+                  Show history
+                </button>
+                <button
+                  type="button"
+                  id="voice-search-selection"
+                  class="btn btn-primary btn-sm voice-search-selection hidden"
+                  disabled
+                  title="Search using highlighted text"
+                >
+                  Search highlighted
+                </button>
+              </div>
+              <p
+                id="voice-transcript"
+                class="voice-transcript voice-transcript-selectable"
+                aria-live="polite"
+              ></p>
+              <div
+                id="voice-transcript-history"
+                class="voice-transcript-history hidden"
+                hidden
+              >
+                <p class="voice-history-hint">
+                  Past segments from this session. Highlight any phrase, then
+                  <strong>Search highlighted</strong>. Click a segment to search
+                  it all.
+                </p>
+                <ul id="voice-history-list" class="voice-history-list"></ul>
+              </div>
             </div>
             <p id="voice-status" class="status voice-status" aria-live="polite"></p>
-            <div id="voice-results" class="voice-results results"></div>
+            <div
+              class="voice-results-scroll"
+              aria-label="Automated search results"
+            >
+              <div id="voice-results" class="voice-results results"></div>
+            </div>
           </section>
 
           <form id="search-form" class="search-form" role="search">
@@ -161,6 +208,14 @@
               </button>
               <button type="button" id="clear-notes-btn" class="btn btn-ghost btn-sm">
                 Clear
+              </button>
+              <button
+                type="button"
+                id="popout-notes-btn"
+                class="btn btn-ghost btn-sm"
+                title="Open ticket investigation form in a new window"
+              >
+                Ticket form
               </button>
             </div>
           </div>
@@ -293,8 +348,8 @@
 
     <script src="/static/api-client.js?v=1"></script>
     <script src="/static/modal.js?v=1"></script>
-    <script src="/static/sidebar.js?v=10"></script>
-    <script src="/static/app.js?v=20"></script>
-    <script src="/static/voice.js?v=6"></script>
+    <script src="/static/sidebar.js?v=12"></script>
+    <script src="/static/app.js?v=21"></script>
+    <script src="/static/voice.js?v=11"></script>
   </body>
 </html>

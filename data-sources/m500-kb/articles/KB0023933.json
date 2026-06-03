@@ -1,0 +1,30 @@
+{
+  "kb_number": "KB0023933",
+  "title": "Mobile Video - ICV - 4RE - How to replace the clock battery on a 4RE DVR (4RE DVR Clock Battery Replacement Guide)",
+  "product": "4RE",
+  "tags": [
+    "KB0023933",
+    "Mobile Video",
+    "In-Car Video",
+    "ICV",
+    "4RE",
+    "4RE DVR",
+    "DVR",
+    "Clock Battery",
+    "CR1225",
+    "Lithium Battery",
+    "USB Port",
+    "Diagnose",
+    "Voltages",
+    "Menu Settings",
+    "Allen Wrench",
+    "Battery Replacement",
+    "GPS",
+    "Time Date",
+    "Troubleshooting",
+    "Maintenance"
+  ],
+  "summary": "Replace the 4RE DVR clock battery (CR1225) when Diagnose > Voltages shows a bad indicator; step-by-step removal via the USB port door without disconnecting vehicle power.",
+  "body": "Article metadata. Created on: 2025-07-29 07:38:08. Updated on: 2025-07-29 20:50:55. Views: 432. Product Categories — Tier 1: Mobile Video; Tier 2: In-Car Video; Tier 3: 4RE; Tier 4: 4RE DVR. Visible to: Guest, Customer, Internal, Partner.\n\nIssue\nThis is the guide on how to replace a clock battery on a 4RE DVR. It is important to replace it when it runs low on power otherwise it can disrupt some of the functions of the 4RE.\n\nThis can be checked by pressing the menu button on the 4RE then going to: Menu Button > Settings > Diagnose > Voltages. The 4RE should tell you if the clock battery is bad or good with a green or red color indicator for the text.\n\nEnvironment\n4RE DVR\n\nResolution\nTools needed to replace the clock battery:\n- 1/16 Allen Wrench\n- Key to remove/open the USB port\n- Small pointed device (toothpick, small screwdriver)\n\nThe battery used is a 3 volt Lithium battery (CR1225). The battery is located beneath the USB port door.\n\n1. Turn OFF 4RE DVR system\n2. Open the USB door and leave the RED USB port inside\n3. Remove the (2) 1/16 Allen screws\n4. Locate the depleted clock battery\n5. Remove the clock battery with a small pointed object (small screw driver, toothpick, etc.)\n6. Replace the clock battery with the positive (+) side up (positive side is slightly larger)\n7. Put the black metal clock cover back on (foam side covering the battery)\n8. Screw in the 1/16 Allen screws\n9. Turn on the DVR and correct the time and date (GPS enabled DVRs will auto detect time)\n10. Dispose of the consumed battery properly. Button cell batteries are generally toxic and should not be discarded in regular trash but rather with other hazardous waste per local government regulations.\n\nAdditional Comments\nThe batteries should be proactively replaced every 18 months or sooner if the vehicle is in a region with extreme heat or cold.\n\nThere is no need to disconnect the 4RE or vehicle battery.",
+  "permalink": "https://cmsosnow.service-now.com/kb?id=kb_article_view&sysparm_article=KB0023933"
+}

@@ -45,6 +45,12 @@ const DEFAULT_INFORMATION_SOURCES = [
     enabled: false,
     description: "Not connected — coming soon",
   },
+  {
+    id: "salesforce",
+    label: "Salesforce",
+    enabled: false,
+    description: "Salesforce — not connected",
+  },
 ];
 
 let informationSources = DEFAULT_INFORMATION_SOURCES;
@@ -96,7 +102,7 @@ async function init() {
 
     const health = await api("/api/health");
 
-    if (!["CMSO", "M500"].includes(health.product)) {
+    if (!["CMSO Signal", "CMSO", "M500"].includes(health.product)) {
 
       searchSourceLabel.textContent =
 

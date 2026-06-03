@@ -524,6 +524,18 @@ NEXT STEPS:
     else if (isWrite) notesEditorEl?.focus();
   }
 
+  function openNotesPopout() {
+    const url = `${window.location.origin}/static/ticket-form.html`;
+    const features = "width=560,height=780,scrollbars=yes,resizable=yes";
+    const win = window.open(url, "motoTicketForm", features);
+    if (!win) {
+      window.MotoDialog?.alert?.({
+        title: "Popout blocked",
+        message: "Allow popups for this site to open the ticket form.",
+      });
+    }
+  }
+
   function initSidebar() {
     loadPins();
     renderPinnedList();
@@ -541,6 +553,8 @@ NEXT STEPS:
     });
 
     document.getElementById("insert-notes-template-btn")?.addEventListener("click", insertNotesTemplate);
+
+    document.getElementById("popout-notes-btn")?.addEventListener("click", openNotesPopout);
 
     document.getElementById("clear-notes-btn")?.addEventListener("click", async () => {
       if (!notesEditorEl?.value.trim()) return;
@@ -576,5 +590,6 @@ NEXT STEPS:
     isPinned,
     togglePin,
     renderPinnedList,
+    openNotesPopout,
   };
 })();

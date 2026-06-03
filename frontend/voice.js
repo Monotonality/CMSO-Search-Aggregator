@@ -5,9 +5,13 @@
 
 const VOICE_STORAGE_KEY = "motoVoiceAssistEnabled";
 const VOICE_LLM_STORAGE_KEY = "motoVoiceUseLlm";
+const VOICE_MODEL_STORAGE_KEY = "motoOllamaModel";
+const VOICE_HISTORY_VISIBLE_KEY = "motoVoiceHistoryVisible";
 const CHUNK_INTERVAL_MS = 3000;
 const MIN_CHUNK_CHARS = 10;
+const MIN_SELECTION_CHARS = 3;
 const FINAL_FLUSH_DELAY_MS = 900;
+const MAX_TRANSCRIPT_HISTORY = 40;
 function voiceApi(path, options) {
   if (window.MotoApi?.api) {
     return window.MotoApi.api(path, options);
@@ -45,8 +49,14 @@ const ollamaHintEl = document.getElementById("voice-ollama-hint");
 const ollamaRecheckBtn = document.getElementById("voice-ollama-recheck");
 const voiceUseLlmCb = document.getElementById("voice-use-llm");
 const voiceUseLlmWrap = document.getElementById("voice-use-llm-wrap");
+const voiceModelSelect = document.getElementById("voice-ollama-model");
+const voiceHistoryToggle = document.getElementById("voice-history-toggle");
+const voiceHistoryPanel = document.getElementById("voice-transcript-history");
+const voiceHistoryList = document.getElementById("voice-history-list");
+const voiceSearchSelectionBtn = document.getElementById("voice-search-selection");
 
 let recognition = null;
+const transcriptHistory = [];
 let listening = false;
 let transcriptBuffer = "";
 let interimText = "";
@@ -87,23 +97,73 @@ function saveUseLlmPreference(on) {
   }
 }
 
-function syncUseLlmCheckbox(ready, modelPulled) {
+function getSelectedOllamaModel() {
+  const fromSelect = voiceModelSelect?.value?.trim();
+  if (fromSelect) return fromSelect;
+  try {
+    return sessionStorage.getItem(VOICE_MODEL_STORAGE_KEY)?.trim() || "";
+  } catch {
+    return "";
+  }
+}
+
+function saveOllamaModel(name) {
+  try {
+    if (name) sessionStorage.setItem(VOICE_MODEL_STORAGE_KEY, name);
+    else sessionStorage.removeItem(VOICE_MODEL_STORAGE_KEY);
+  } catch {
+    /* ignore */
+  }
+}
+
+function populateOllamaModelSelect(models, configured, suggested) {
+  if (!voiceModelSelect) return;
+  const prev = getSelectedOllamaModel() || configured || "";
+  voiceModelSelect.innerHTML = "";
+  const names = Array.isArray(models) ? [...models] : [];
+  if (configured && !names.includes(configured)) {
+    names.unshift(configured);
+  }
+  if (suggested && !names.includes(suggested)) {
+    names.unshift(suggested);
+  }
+  for (const name of names) {
+    const opt = document.createElement("option");
+    opt.value = name;
+    opt.textContent = name;
+    voiceModelSelect.appendChild(opt);
+  }
+  const pick =
+    (prev && names.includes(prev) && prev) ||
+    (suggested && names.includes(suggested) && suggested) ||
+    (configured && names.includes(configured) && configured) ||
+    names[0] ||
+    "";
+  if (pick) {
+    voiceModelSelect.value = pick;
+    saveOllamaModel(pick);
+  }
+}
+
+function syncUseLlmCheckbox(available, modelReady) {
   if (!voiceUseLlmCb) return;
-  const canUseOllama = ready && modelPulled !== false;
+  const canUseOllama = Boolean(available);
 
   voiceUseLlmCb.disabled = !canUseOllama;
   if (voiceUseLlmWrap) {
     voiceUseLlmWrap.classList.toggle("is-disabled", !canUseOllama);
     voiceUseLlmWrap.title = canUseOllama
-      ? ""
-      : "Ollama is not ready. Model pulls are blocked on many corporate networks — use rule-based extraction instead.";
+      ? modelReady
+        ? ""
+        : "Ollama is up; pick your model from the list (must match `ollama list` exactly)."
+      : "Start Ollama first (ollama serve or Ollama app).";
   }
 
   const pref = loadUseLlmPreference();
   if (pref !== null) {
     voiceUseLlmCb.checked = pref && canUseOllama;
   } else {
-    voiceUseLlmCb.checked = canUseOllama;
+    voiceUseLlmCb.checked = canUseOllama && modelReady;
   }
 }
 
@@ -141,6 +201,148 @@ function updateTranscriptDisplay() {
   if (!transcriptEl) return;
   const full = (transcriptBuffer + " " + interimText).trim();
   transcriptEl.textContent = full || "Speak to describe the issue…";
+}
+
+function isHistoryVisible() {
+  return voiceHistoryPanel && !voiceHistoryPanel.hidden;
+}
+
+function setHistoryVisible(on) {
+  if (!voiceHistoryPanel || !voiceHistoryToggle) return;
+  voiceHistoryPanel.classList.toggle("hidden", !on);
+  voiceHistoryPanel.hidden = !on;
+  voiceHistoryToggle.setAttribute("aria-expanded", on ? "true" : "false");
+  voiceHistoryToggle.textContent = on ? "Hide history" : "Show history";
+  try {
+    sessionStorage.setItem(VOICE_HISTORY_VISIBLE_KEY, on ? "1" : "0");
+  } catch {
+    /* ignore */
+  }
+  if (on) renderTranscriptHistory();
+}
+
+function loadHistoryVisiblePreference() {
+  try {
+    return sessionStorage.getItem(VOICE_HISTORY_VISIBLE_KEY) === "1";
+  } catch {
+    return false;
+  }
+}
+
+function recordTranscriptHistory(text, source = "auto") {
+  const trimmed = String(text || "").trim();
+  if (trimmed.length < MIN_CHUNK_CHARS) return;
+  if (transcriptHistory.length && transcriptHistory[0].text === trimmed) return;
+  transcriptHistory.unshift({
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 7)}`,
+    text: trimmed,
+    source,
+    at: new Date().toLocaleTimeString(),
+  });
+  if (transcriptHistory.length > MAX_TRANSCRIPT_HISTORY) {
+    transcriptHistory.length = MAX_TRANSCRIPT_HISTORY;
+  }
+  if (isHistoryVisible()) renderTranscriptHistory();
+}
+
+function renderTranscriptHistory() {
+  if (!voiceHistoryList) return;
+  voiceHistoryList.innerHTML = "";
+  if (!transcriptHistory.length) {
+    const empty = document.createElement("li");
+    empty.className = "voice-history-empty";
+    empty.textContent =
+      "No past segments yet — they appear here after auto-search or Search now.";
+    voiceHistoryList.appendChild(empty);
+    return;
+  }
+  for (const entry of transcriptHistory) {
+    const li = document.createElement("li");
+    li.className = "voice-history-item";
+    li.dataset.historyId = entry.id;
+
+    const meta = document.createElement("div");
+    meta.className = "voice-history-meta";
+    const time = document.createElement("span");
+    time.textContent = entry.at;
+    const src = document.createElement("span");
+    src.textContent = entry.source === "selection" ? "highlighted" : "auto";
+    meta.append(time, src);
+
+    const text = document.createElement("p");
+    text.className = "voice-history-text";
+    text.textContent = entry.text;
+
+    li.append(meta, text);
+    li.addEventListener("click", () => onHistoryItemClick(entry));
+    voiceHistoryList.appendChild(li);
+  }
+}
+
+function getSelectionInVoicePanel() {
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return "";
+  const range = sel.getRangeAt(0);
+  const node = range.commonAncestorContainer;
+  const el =
+    node.nodeType === Node.ELEMENT_NODE ? node : node.parentElement;
+  if (!el || !voicePanel?.contains(el)) return "";
+  return sel.toString().trim();
+}
+
+function updateSearchSelectionButton() {
+  if (!voiceSearchSelectionBtn) return;
+  const text = getSelectionInVoicePanel();
+  const ok = text.length >= MIN_SELECTION_CHARS;
+  voiceSearchSelectionBtn.disabled = !ok;
+  voiceSearchSelectionBtn.classList.toggle("hidden", !ok);
+  if (ok) {
+    const preview =
+      text.length > 48 ? `${text.slice(0, 48)}…` : text;
+    voiceSearchSelectionBtn.title = `Search: ${preview}`;
+  }
+}
+
+async function searchFromTranscript(text, options = {}) {
+  const segment = String(text || "").trim();
+  const minLen = options.fromSelection ? MIN_SELECTION_CHARS : MIN_CHUNK_CHARS;
+  if (segment.length < minLen) {
+    setVoiceStatus(
+      `Highlight at least ${minLen} characters to search.`,
+      true
+    );
+    return;
+  }
+  if (options.recordHistory !== false) {
+    recordTranscriptHistory(
+      segment,
+      options.fromSelection ? "selection" : "manual"
+    );
+  }
+  await processSegment(segment, {
+    skipDedupe: Boolean(options.skipDedupe),
+    fromSelection: Boolean(options.fromSelection),
+  });
+}
+
+function onHistoryItemClick(entry) {
+  const sel = getSelectionInVoicePanel();
+  if (sel.length >= MIN_SELECTION_CHARS) return;
+  for (const item of voiceHistoryList?.querySelectorAll(".voice-history-item") ||
+    []) {
+    item.classList.toggle("is-active", item.dataset.historyId === entry.id);
+  }
+  searchFromTranscript(entry.text, { skipDedupe: true, recordHistory: false });
+}
+
+async function onSearchSelectionClick() {
+  const text = getSelectionInVoicePanel();
+  if (text.length < MIN_SELECTION_CHARS) return;
+  await searchFromTranscript(text, {
+    fromSelection: true,
+    skipDedupe: true,
+    recordHistory: true,
+  });
 }
 
 function speechSupported() {
@@ -224,11 +426,12 @@ async function flushTranscriptChunk(force) {
   interimText = "";
   lastFlushedSegment = toSend;
   updateTranscriptDisplay();
+  recordTranscriptHistory(toSend, "auto");
 
   await processSegment(toSend);
 }
 
-async function processSegment(segment) {
+async function processSegment(segment, options = {}) {
   if (processing || !segment || segment.length < MIN_CHUNK_CHARS) return;
   processing = true;
   setVoiceStatus("Extracting search queries…");
@@ -246,6 +449,7 @@ async function processSegment(segment) {
         max_queries: 2,
         limit_per_query: 8,
         use_llm: getUseLlm(),
+        ollama_model: getSelectedOllamaModel() || undefined,
       }),
     });
     const bundles = data.bundles || [];
@@ -279,7 +483,7 @@ async function processSegment(segment) {
     let shown = 0;
     for (const bundle of bundles) {
       const qKey = bundle.query.toLowerCase();
-      if (recentQueries.has(qKey)) continue;
+      if (!options.skipDedupe && recentQueries.has(qKey)) continue;
       recentQueries.add(qKey);
       shown += 1;
       if (recentQueries.size > 40) {
@@ -340,17 +544,24 @@ function prependVoiceBundle(bundle, modeLabel) {
 
   wrap.appendChild(list);
   voiceResultsEl.prepend(wrap);
+  const scrollEl = voiceResultsEl.closest(".voice-results-scroll");
+  if (scrollEl) scrollEl.scrollTop = 0;
 }
 
 async function refreshOllamaHint() {
   if (!ollamaHintEl) return;
   if (ollamaRecheckBtn) ollamaRecheckBtn.disabled = true;
   try {
-    const data = await voiceApi("/api/voice/status");
-    const corpBlockNote =
-      "Model downloads use cloudflarestorage.com — often blocked on corporate Wi‑Fi. " +
-      "Use rule-based extraction (checkbox off), phone hotspot to pull tinyllama, " +
-      "or copy %USERPROFILE%\\.ollama\\models from a home PC.";
+    const selected = getSelectedOllamaModel();
+    const q = selected ? `?model=${encodeURIComponent(selected)}` : "";
+    const data = await voiceApi(`/api/voice/status${q}`);
+    const ready = data.model_ready === true || data.model_ready === "true";
+
+    populateOllamaModelSelect(
+      data.models || [],
+      data.model,
+      data.suggested_model
+    );
 
     if (data.llm_disabled) {
       ollamaHintEl.textContent =
@@ -358,21 +569,24 @@ async function refreshOllamaHint() {
       ollamaHintEl.classList.add("is-warn");
       syncUseLlmCheckbox(false, false);
       if (ollamaRecheckBtn) ollamaRecheckBtn.classList.add("hidden");
-    } else if (data.available && data.model_pulled !== false) {
-      ollamaHintEl.textContent = `Local LLM: ${data.model} (Ollama at ${data.base_url || "localhost"})`;
+    } else if (data.available && ready) {
+      const active = getSelectedOllamaModel() || data.model;
+      ollamaHintEl.textContent = `Ollama ready — model: ${active} (${data.base_url || "localhost"})`;
       ollamaHintEl.classList.remove("is-warn");
+      saveUseLlmPreference(true);
       syncUseLlmCheckbox(true, true);
+      if (voiceUseLlmCb) voiceUseLlmCb.checked = true;
       if (ollamaRecheckBtn) ollamaRecheckBtn.classList.add("hidden");
-    } else if (data.available && data.model_pulled === false) {
+    } else if (data.available) {
       ollamaHintEl.textContent =
-        (data.hint || `Pull failed? Try: ollama pull ${data.model}`) +
-        " " +
-        corpBlockNote;
+        data.hint ||
+        `Ollama is up. Pick the exact name from \`ollama list\` in the dropdown, then enable query extraction.`;
       ollamaHintEl.classList.add("is-warn");
       syncUseLlmCheckbox(true, false);
       if (ollamaRecheckBtn) ollamaRecheckBtn.classList.remove("hidden");
     } else {
-      ollamaHintEl.textContent = `Ollama not reachable. ${corpBlockNote}`;
+      ollamaHintEl.textContent =
+        data.hint || "Ollama not reachable — start Ollama, then Recheck.";
       ollamaHintEl.classList.add("is-warn");
       syncUseLlmCheckbox(false, false);
       if (ollamaRecheckBtn) ollamaRecheckBtn.classList.remove("hidden");
@@ -442,7 +656,8 @@ async function onSearchNowClick() {
     return;
   }
   lastFlushedSegment = "";
-  await flushTranscriptChunk(true);
+  recordTranscriptHistory(segment, "manual");
+  await processSegment(segment, { skipDedupe: true });
 }
 
 function onListenClick() {
@@ -484,6 +699,26 @@ function initVoiceAssist() {
       saveUseLlmPreference(voiceUseLlmCb.checked);
     });
   }
+
+  if (voiceModelSelect) {
+    voiceModelSelect.addEventListener("change", () => {
+      saveOllamaModel(voiceModelSelect.value);
+      refreshOllamaHint();
+    });
+  }
+
+  if (voiceHistoryToggle) {
+    setHistoryVisible(loadHistoryVisiblePreference());
+    voiceHistoryToggle.addEventListener("click", () => {
+      setHistoryVisible(!isHistoryVisible());
+    });
+  }
+
+  if (voiceSearchSelectionBtn) {
+    voiceSearchSelectionBtn.addEventListener("click", onSearchSelectionClick);
+  }
+
+  document.addEventListener("selectionchange", updateSearchSelectionButton);
 
   if (enabled) refreshOllamaHint();
 }

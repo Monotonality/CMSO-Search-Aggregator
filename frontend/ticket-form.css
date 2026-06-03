@@ -1,0 +1,157 @@
+/* Standalone ticket form — does not use main app layout */
+:root {
+  --tf-navy: #001b3d;
+  --tf-blue: #005eb8;
+  --tf-border: #d0d4d9;
+  --tf-bg: #f0f1f5;
+  --tf-surface: #ffffff;
+  --tf-text: #181a1f;
+  --tf-muted: #656e73;
+  --tf-ok: #3db96f;
+  --tf-error: #c23934;
+  --tf-radius: 6px;
+  --tf-font: "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 1.25rem 1.5rem 1.5rem;
+  font-family: var(--tf-font);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--tf-text);
+  background: var(--tf-bg);
+}
+
+.tf-header {
+  margin-bottom: 1.25rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid var(--tf-blue);
+}
+
+.tf-header h1 {
+  margin: 0 0 0.35rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--tf-navy);
+}
+
+.tf-header p {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--tf-muted);
+}
+
+.tf-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  max-width: 40rem;
+}
+
+.tf-field label {
+  display: block;
+  margin-bottom: 0.35rem;
+  font-size: 0.8125rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+  color: var(--tf-navy);
+}
+
+.tf-field input,
+.tf-field textarea {
+  display: block;
+  width: 100%;
+  font: inherit;
+  font-size: 0.9375rem;
+  padding: 0.55rem 0.65rem;
+  border: 1px solid var(--tf-border);
+  border-radius: var(--tf-radius);
+  background: var(--tf-surface);
+  color: var(--tf-text);
+}
+
+.tf-field textarea {
+  resize: vertical;
+  min-height: 5rem;
+  line-height: 1.45;
+}
+
+.tf-field input:focus,
+.tf-field textarea:focus {
+  outline: 2px solid var(--tf-blue);
+  outline-offset: 1px;
+  border-color: var(--tf-blue);
+}
+
+.tf-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 0.75rem;
+  margin-top: 1.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--tf-border);
+  max-width: 40rem;
+}
+
+.tf-btn {
+  font: inherit;
+  font-size: 0.875rem;
+  font-weight: 600;
+  padding: 0.5rem 1rem;
+  border-radius: var(--tf-radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+.tf-btn-primary {
+  background: var(--tf-blue);
+  color: #fff;
+}
+
+.tf-btn-primary:hover {
+  background: #004a94;
+}
+
+.tf-btn-secondary {
+  background: var(--tf-surface);
+  border-color: var(--tf-border);
+  color: var(--tf-text);
+}
+
+.tf-btn-secondary:hover {
+  border-color: var(--tf-blue);
+  color: var(--tf-navy);
+}
+
+.tf-btn-ghost {
+  background: transparent;
+  color: var(--tf-muted);
+}
+
+.tf-btn-ghost:hover {
+  color: var(--tf-text);
+}
+
+.tf-status {
+  flex: 1 1 100%;
+  margin: 0;
+  font-size: 0.8125rem;
+  color: var(--tf-muted);
+}
+
+.tf-status.is-ok {
+  color: var(--tf-ok);
+}
+
+.tf-status.is-error {
+  color: var(--tf-error);
+}
