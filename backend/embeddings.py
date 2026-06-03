@@ -76,13 +76,16 @@ def load_tfidf_vectorizer(blob: str) -> None:
 
 
 def _use_fastembed() -> bool:
-    return os.getenv("USE_FASTEMBED", "").lower() in ("1", "true", "yes")
+    from hackathon_ai import fastembed_allowed
+
+    return fastembed_allowed()
 
 
 def embed_corpus(texts: list[str]) -> tuple[list[np.ndarray], str, str]:
     """
     Returns (vectors, model_name, optional tfidf_serialized).
-    Defaults to TF-IDF (offline). Set USE_FASTEMBED=1 to try FastEmbed first.
+    Defaults to TF-IDF (offline, hackathon-compliant). FastEmbed requires
+    HACKATHON_STRICT=0 and USE_FASTEMBED=1.
     """
     if not texts:
         return [], "none", ""

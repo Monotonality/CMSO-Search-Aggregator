@@ -87,6 +87,10 @@
                 <input type="checkbox" id="voice-use-llm" />
                 <span>Use Ollama for query extraction</span>
               </label>
+              <p id="voice-hackathon-notice" class="voice-hackathon-notice" hidden>
+                2026 hackathon: local Ollama only (Llama, Mistral, Phi, Gemma; ≤9B).
+                Default <code>gemma3:4b</code>. Cloud and prohibited models are blocked.
+              </p>
             </div>
             <div class="voice-assist-controls">
               <button
@@ -320,7 +324,9 @@
     <footer class="footer">
       <span>MSI Library + local KB</span>
       <span class="footer-sep">·</span>
-      <span>ServiceNow-style knowledge search (demo)</span>
+      <span>CMSO Signal demo</span>
+      <span class="footer-sep">·</span>
+      <span>2026 hackathon AI: local Ollama + TF-IDF search</span>
     </footer>
 
     <div
@@ -350,6 +356,6 @@
     <script src="/static/modal.js?v=1"></script>
     <script src="/static/sidebar.js?v=12"></script>
     <script src="/static/app.js?v=21"></script>
-    <script src="/static/voice.js?v=11"></script>
+    <script src="/static/voice.js?v=12"></script>
   </body>
 </html>

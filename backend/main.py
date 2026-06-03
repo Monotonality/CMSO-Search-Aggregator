@@ -27,6 +27,7 @@ from search_index import (
     rebuild_index,
     search_mode_info,
 )
+from hackathon_ai import compliance_summary
 from voice_intent import check_ollama, extract_search_queries
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -120,7 +121,14 @@ async def config() -> dict[str, Any]:
             for mode_id, cfg in SEARCH_MODES.items()
         ],
         "information_sources": sources_for_config(),
+        "hackathon_compliance": compliance_summary(),
     }
+
+
+@app.get("/api/hackathon/compliance")
+async def hackathon_compliance() -> dict[str, Any]:
+    """2026 hackathon AI rules summary for judges and operators."""
+    return compliance_summary()
 
 
 @app.post("/api/index/rebuild")

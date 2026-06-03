@@ -13,7 +13,7 @@ from search_index import rebuild_index  # noqa: E402
 
 def main() -> int:
     print("Rebuilding search index (FTS5 + embeddings)...")
-    print("First run may download the embedding model (~130 MB).")
+    print("Uses local TF-IDF vectors (hackathon-compliant; no model download).")
     stats = rebuild_index()
     print(stats)
     if stats.get("document_count", 0) > 0:

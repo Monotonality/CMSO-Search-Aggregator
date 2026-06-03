@@ -16,7 +16,7 @@ Lightweight, read-only **contextual retrieval demo** for Software Systems Techno
 ### Out of scope (for now)
 
 * Live transcript stream and entity extraction
-* Vector databases and semantic search
+* Live external ticketing APIs
 * Customer network layout data
 * Any external ticketing or knowledge APIs
 
@@ -30,7 +30,8 @@ Lightweight, read-only **contextual retrieval demo** for Software Systems Techno
      ▼
 [ FastAPI hybrid search ]
      ├─► SQLite FTS5 (BM25)          full-text index
-     ├─► FastEmbed vectors           semantic similarity (free, local)
+     ├─► TF-IDF vectors (local)      semantic similarity (2026 hackathon default)
+     ├─► Voice (optional)            local Ollama only — see 2026 Hackathon AI Guidance.md
      └─► data-sources/
            ├─ m500-kb/articles/*.json
            └─ msi-library/manifest.json + *.pdf

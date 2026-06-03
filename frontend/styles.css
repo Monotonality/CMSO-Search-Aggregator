@@ -1287,6 +1287,17 @@ body.dialog-open {
   color: var(--warn);
 }
 
+.voice-hackathon-notice {
+  margin: 0.5rem 0 0;
+  font-size: 0.7rem;
+  color: var(--sn-muted);
+  line-height: 1.4;
+}
+
+.voice-hackathon-notice code {
+  font-size: 0.68rem;
+}
+
 .voice-ollama-recheck {
   margin-top: 0.35rem;
 }

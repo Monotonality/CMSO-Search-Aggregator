@@ -116,11 +116,17 @@ function saveOllamaModel(name) {
   }
 }
 
-function populateOllamaModelSelect(models, configured, suggested) {
+function populateOllamaModelSelect(models, configured, suggested, compliantModels) {
   if (!voiceModelSelect) return;
   const prev = getSelectedOllamaModel() || configured || "";
   voiceModelSelect.innerHTML = "";
-  const names = Array.isArray(models) ? [...models] : [];
+  const compliant = Array.isArray(compliantModels) ? compliantModels : [];
+  const names =
+    compliant.length > 0
+      ? [...compliant]
+      : Array.isArray(models)
+        ? [...models]
+        : [];
   if (configured && !names.includes(configured)) {
     names.unshift(configured);
   }
@@ -560,8 +566,23 @@ async function refreshOllamaHint() {
     populateOllamaModelSelect(
       data.models || [],
       data.model,
-      data.suggested_model
+      data.suggested_model,
+      data.compliant_models
     );
+
+    const hackathonNotice = document.getElementById("voice-hackathon-notice");
+    if (hackathonNotice) {
+      hackathonNotice.hidden = false;
+    }
+
+    const compliance = data.model_compliance;
+    if (compliance && compliance.ok === false && Array.isArray(compliance.reasons)) {
+      ollamaHintEl.textContent = compliance.reasons.join(" ");
+      ollamaHintEl.classList.add("is-warn");
+      syncUseLlmCheckbox(Boolean(data.available), false);
+      if (ollamaRecheckBtn) ollamaRecheckBtn.classList.remove("hidden");
+      return;
+    }
 
     if (data.llm_disabled) {
       ollamaHintEl.textContent =

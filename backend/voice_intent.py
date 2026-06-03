@@ -12,6 +12,14 @@ from typing import Any
 
 import httpx
 
+from hackathon_ai import (
+    compliance_summary,
+    configured_ollama_model,
+    filter_compliant_models,
+    pick_suggested_model,
+    validate_ollama_model,
+)
+
 def _ollama_base_urls() -> list[str]:
     primary = os.environ.get("OLLAMA_BASE_URL", "http://127.0.0.1:11434").rstrip("/")
     urls = [primary]
@@ -23,10 +31,7 @@ def _ollama_base_urls() -> list[str]:
 
 
 OLLAMA_BASE = _ollama_base_urls()[0]
-OLLAMA_MODEL = os.environ.get(
-    "OLLAMA_VOICE_MODEL",
-    os.environ.get("OLLAMA_MODEL", "gemma4:31b-cloud"),
-)
+OLLAMA_MODEL = configured_ollama_model()
 OLLAMA_TIMEOUT = float(os.environ.get("OLLAMA_TIMEOUT_SEC", "120"))
 
 
@@ -246,7 +251,7 @@ async def _fetch_ollama_names(client: httpx.AsyncClient, base: str) -> list[str]
 
 
 async def _probe_model(client: httpx.AsyncClient, base: str, model: str) -> bool:
-    """True if Ollama recognizes the model (including cloud models)."""
+    """True if Ollama recognizes the model name."""
     try:
         r = await client.post(
             f"{base}/api/show",
@@ -261,25 +266,21 @@ async def _probe_model(client: httpx.AsyncClient, base: str, model: str) -> bool
 
 
 def _pick_suggested_model(configured: str, names: list[str]) -> str | None:
-    if not names:
-        return None
-    if _model_is_pulled(configured, names):
-        return configured
-    cfg = configured.lower()
-    for n in names:
-        if cfg in n.lower() or n.lower() in cfg:
-            return n
-    for n in names:
-        if "gemma" in n.lower() or "cloud" in n.lower():
-            return n
-    return names[0]
+    return pick_suggested_model(configured, names)
 
 
 async def check_ollama(model: str | None = None) -> dict[str, Any]:
     """Whether Ollama is reachable and which model is configured."""
     configured = (model or OLLAMA_MODEL).strip()
+    compliance = validate_ollama_model(configured)
+    base_payload: dict[str, Any] = {
+        "model_compliance": compliance,
+        "hackathon": compliance_summary(),
+        "compliant_models": [],
+    }
     if not voice_llm_enabled():
         return {
+            **base_payload,
             "available": False,
             "base_url": OLLAMA_BASE,
             "model": configured,
@@ -291,12 +292,16 @@ async def check_ollama(model: str | None = None) -> dict[str, Any]:
         try:
             async with httpx.AsyncClient(timeout=25.0) as client:
                 names = await _fetch_ollama_names(client, base)
+                compliant_names = filter_compliant_models(names)
                 in_list = _model_is_pulled(configured, names)
                 probed = await _probe_model(client, base, configured)
-                ready = in_list or probed
+                ready = (in_list or probed) and compliance["ok"]
                 suggested = _pick_suggested_model(configured, names)
                 hint: str | None = None
-                if ready:
+                if not compliance["ok"]:
+                    hint = " ".join(compliance["reasons"])
+                    hint += f' Recommended: ollama pull {compliance["recommended"]}'
+                elif ready:
                     hint = None
                 elif suggested and suggested != configured:
                     hint = (
@@ -316,10 +321,12 @@ async def check_ollama(model: str | None = None) -> dict[str, Any]:
                         f'"Use Ollama anyway" below or set OLLAMA_VOICE_MODEL to the exact name.'
                     )
                 return {
+                    **base_payload,
                     "available": True,
                     "base_url": base,
                     "model": configured,
                     "models": names[:20],
+                    "compliant_models": compliant_names[:20],
                     "model_pulled": in_list,
                     "model_ready": ready,
                     "model_probed": probed,
@@ -329,6 +336,7 @@ async def check_ollama(model: str | None = None) -> dict[str, Any]:
         except Exception as exc:
             last_error = str(exc)
     return {
+        **base_payload,
         "available": False,
         "base_url": OLLAMA_BASE,
         "model": configured,
@@ -358,6 +366,15 @@ async def extract_search_queries(
         }
 
     chat_model = (model or OLLAMA_MODEL).strip()
+    compliance = validate_ollama_model(chat_model)
+    if not compliance["ok"]:
+        return {
+            "queries": _heuristic_queries(text, max_queries),
+            "source": "heuristic",
+            "ollama_error": "; ".join(compliance["reasons"]),
+            "model_compliance": compliance,
+        }
+
     payload = {
         "model": chat_model,
         "stream": False,
