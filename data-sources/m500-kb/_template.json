@@ -1,0 +1,9 @@
+{
+  "kb_number": "KB00XXXXX",
+  "title": "Short troubleshooting article title",
+  "product": "M500",
+  "tags": ["keyword1", "keyword2"],
+  "summary": "One-line description (optional)",
+  "permalink": "https://cmsosnow.service-now.com/kb?id=kb_article_view&sysparm_article=KB00XXXXX",
+  "body": "Full article text so search can match symptoms, error codes, and resolution steps."
+}

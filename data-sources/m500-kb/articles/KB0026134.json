@@ -1,0 +1,32 @@
+{
+  "kb_number": "KB0026134",
+  "title": "Mobile Video - BWC - V300 / V700 - M500 - Internal SPS - Error 0505 Association Failed",
+  "product": "M500",
+  "tags": [
+    "Mobile Video",
+    "Bodyworn",
+    "BWC",
+    "V300",
+    "V700",
+    "M500",
+    "Error 0505",
+    "Association Failed",
+    "In-Car Network",
+    "Wi-Fi Base",
+    "Wi-Fi Base 02",
+    "Internal SPS",
+    "External SPS",
+    "Smart Power Switch",
+    "WGA00574",
+    "SPS",
+    "MikroTik Groove",
+    "DHCP",
+    "Integrated System",
+    "Firmware 1.1.12.31",
+    "State Capture",
+    "Troubleshooting"
+  ],
+  "summary": "Resolve BWC Error 0505 Association Failed on V300/V700 when the Wi-Fi Base cannot associate with the M500 In-Car Network—check cables, SPS type, Wi-Fi Base IP, and MikroTik DHCP settings.",
+  "body": "Article metadata. Created on: 2025-11-06 11:56:04. Updated on: 2026-03-10 17:30:38. Views: 1303. Product Categories — Tier 1: Mobile Video; Tier 2: Bodyworn. Visible to: Guest, Customer, Internal, Partner.\n\nError\nError 0505 — \"Association Failed\"\nUnable to associate with the In-Car Network.\nError will display on the BWC.\n\nEnvironment\nM500 In-Car System with Wi-Fi Base 02 for use with V300/V700 BWC.\n\nRoot Cause\nThe Wi-Fi Base is having issues communicating with the In-Car DVR System.\nA possible cause could be the Wi-Fi Base, the cable to the SPS, or the SPS itself.\nThe MikroTik Groove, if present, may have a configuration that can cause this issue as well.\n\nWorkaround/Fix — M500\nDetermine when the issue began.\nHad it ever worked since the original install?\nDetermine if it is only one vehicle, or are there more? Is the issue found in the entire fleet?\nAlso confirm if it is happening with one of the V300/V700, or more than one.\nDetermine when the V300/V700 was last checked out. A long time since last checkout may prevent a sync.\nDetermine if the installed system has an External or Internal SPS.\nWith firmware 1.1.12.31 and newer, this can be checked from the M500 display: Home > Status > Network > Scroll Down to Integrated System. This will also provide additional information as to the SPS network information.\nWith earlier firmware, check for a physical box connected by a cable to the M500. The box will read \"Smart Power Switch,\" \"WGA00574,\" and should have a Motorola logo in the corner.\nIf one is not present, or you recall running an SPS JSON/Script file, you are working with an internal SPS and the Wi-Fi Base will be connected directly to the M500.\nDetermine if Wi-Fi base IP address is showing an IP address: Home > Status > Network > Scroll Down to Wi-Fi Base IP Address.\nIf entry is blank, then try different port, or cable.\n\nWorkaround/Fix — Internal SPS\nConfirm that the Black Cable is run from the M500 to the Wi-Fi Base. The Red Cable will not work and will prevent communication.\nChange the port that the Wi-Fi base is plugged into (1, 2, or 3).\nIf the issue persists, or you are hesitant to perform any of the steps listed above, please call support at 1-800-674-4357 (Option 1) for further assistance.\n\nMotorola Internal Only — Internal Troubleshooting\nNote: There might be an issue where the MikroTik Groove configuration was sent to the agency with the DHCP server settings enabled.\nIt is recommended to check Quick Set, DHCP Server and/or New Terminal. Sometimes DHCP Server will be unchecked but still act as a DHCP server.\nExample 1 (Quick Set): Uncheck DHCP Server box and click Apply.\nExample 2 (DHCP Server): Click on DHCP Server setting and click minus button to remove.\nExample 3 (Open New Terminal and type export).\nResetting configuration (KB0024783) and redeploying the correct configuration for the agency (retrieved either from the customer folder or a vehicle with a known working setup) will also resolve the issue.\n\nViewing M500 State Capture log to see if DHCP server is enabled on Groove:\n1. Navigate to storage/logs/Integration folder. Open current log file.\n2. Review to see if the log shows 192.168.88.X IP address trying to be pushed from the MikroTik.\nExample from current log file: log entries indicating 192.168.88.x addresses pushed from MikroTik DHCP.",
+  "permalink": "https://cmsosnow.service-now.com/kb?id=kb_article_view&sysparm_article=KB0026134"
+}

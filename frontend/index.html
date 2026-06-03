@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CMSO Aggregated Troubleshooter</title>
+    <link rel="stylesheet" href="/static/styles.css" />
+  </head>
+  <body>
+    <header class="topbar" role="banner">
+      <div class="topbar-inner">
+        <div class="topbar-brand">
+          <span class="brand-avatar" title="John Doe" aria-label="John Doe">JD</span>
+          <div class="brand-text">
+            <span class="brand-title">CMSO Aggregated Troubleshooter</span>
+          </div>
+        </div>
+        <div class="topbar-meta">
+          <span class="sn-pill">Knowledge workspace</span>
+          <p id="header-meta" class="header-meta"></p>
+        </div>
+      </div>
+    </header>
+
+    <div class="workspace workspace-layout">
+      <main class="app search-column">
+        <section class="panel card search-panel">
+          <div class="panel-head panel-head-with-toggle">
+            <div class="panel-head-main">
+              <h1 class="panel-title">Search</h1>
+              <p id="search-source-label" class="search-source"></p>
+            </div>
+            <label class="voice-assist-toggle" title="Show voice-driven search panel">
+              <input
+                type="checkbox"
+                id="voice-assist-toggle"
+                aria-controls="voice-assist-panel"
+              />
+              <span class="voice-assist-toggle-label">Voice assist</span>
+            </label>
+          </div>
+
+          <div class="control-block">
+            <span class="control-label">Search mode</span>
+            <div
+              id="search-mode-group"
+              class="search-mode"
+              role="group"
+              aria-label="Search mode"
+            ></div>
+            <p id="search-mode-hint" class="search-mode-hint"></p>
+          </div>
+
+          <div class="control-block source-filter-wrap">
+            <span class="source-filter-label">Information sources</span>
+            <div
+              id="source-filter-group"
+              class="source-filter"
+              role="group"
+              aria-label="Information sources"
+            ></div>
+          </div>
+
+          <section
+            id="voice-assist-panel"
+            class="voice-assist-panel hidden"
+            aria-label="Voice assist automated search"
+            hidden
+          >
+            <div class="voice-assist-head">
+              <h2 class="voice-assist-title">Automated search</h2>
+              <p id="voice-ollama-hint" class="voice-ollama-hint"></p>
+              <button
+                type="button"
+                id="voice-ollama-recheck"
+                class="btn btn-ghost btn-sm voice-ollama-recheck hidden"
+              >
+                Recheck Ollama
+              </button>
+              <label class="voice-use-llm-toggle" id="voice-use-llm-wrap">
+                <input type="checkbox" id="voice-use-llm" />
+                <span>Use Ollama for query extraction</span>
+              </label>
+            </div>
+            <div class="voice-assist-controls">
+              <button
+                type="button"
+                id="voice-listen-btn"
+                class="btn btn-primary btn-sm"
+              >
+                Start listening
+              </button>
+              <button
+                type="button"
+                id="voice-search-now-btn"
+                class="btn btn-ghost btn-sm"
+                title="Search using the current transcript"
+              >
+                Search now
+              </button>
+              <span id="voice-mic-status" class="voice-mic-status" aria-live="polite"
+                >Off</span
+              >
+            </div>
+            <div class="voice-transcript-wrap">
+              <span class="control-label">Live transcript</span>
+              <p id="voice-transcript" class="voice-transcript" aria-live="polite"></p>
+            </div>
+            <p id="voice-status" class="status voice-status" aria-live="polite"></p>
+            <div id="voice-results" class="voice-results results"></div>
+          </section>
+
+          <form id="search-form" class="search-form" role="search">
+            <label class="search-field-label" for="search-input">Query</label>
+            <div class="search-form-row">
+              <input
+                type="search"
+                id="search-input"
+                name="q"
+                placeholder="Error code, symptom, or topic…"
+                autocomplete="off"
+                aria-label="Search troubleshooting content"
+              />
+              <button type="submit" class="btn btn-primary">Search</button>
+            </div>
+          </form>
+
+          <p id="search-status" class="status" aria-live="polite"></p>
+          <div id="results" class="results"></div>
+        </section>
+      </main>
+
+      <aside class="sidebar-column" aria-label="Notes and pinned sources">
+        <section class="panel card pinned-panel">
+          <div class="panel-head panel-head-compact">
+            <h2 class="panel-title panel-title-sm">
+              Pinned sources
+              <span id="pinned-count" class="count-badge">0</span>
+            </h2>
+            <button type="button" id="clear-pins-btn" class="btn btn-ghost btn-sm">
+              Clear all
+            </button>
+          </div>
+          <p id="pinned-empty" class="sidebar-empty">
+            Pin results from search to keep KB articles and manual pages handy.
+          </p>
+          <div id="pinned-list" class="pinned-list"></div>
+        </section>
+
+        <section class="panel card notes-panel">
+          <div class="panel-head panel-head-compact">
+            <h2 class="panel-title panel-title-sm">Session notes</h2>
+            <div class="panel-head-actions">
+              <button
+                type="button"
+                id="insert-notes-template-btn"
+                class="btn btn-ghost btn-sm"
+                title="Insert ticket investigation template (once per session)"
+              >
+                Ticket template
+              </button>
+              <button type="button" id="clear-notes-btn" class="btn btn-ghost btn-sm">
+                Clear
+              </button>
+            </div>
+          </div>
+          <p class="sidebar-hint">
+            Use <strong>Write</strong> with the toolbar, or <strong>Preview</strong> to read. Saved in this
+            browser.
+          </p>
+          <div class="notes-tabs" role="tablist" aria-label="Notes view">
+            <button
+              type="button"
+              class="notes-tab is-active"
+              data-notes-tab="write"
+              role="tab"
+              aria-selected="true"
+            >
+              Write
+            </button>
+            <button
+              type="button"
+              class="notes-tab"
+              data-notes-tab="preview"
+              role="tab"
+              aria-selected="false"
+            >
+              Preview
+            </button>
+          </div>
+          <div id="notes-pane-edit" class="notes-pane">
+            <div
+              id="notes-toolbar"
+              class="notes-toolbar"
+              role="toolbar"
+              aria-label="Note formatting"
+            >
+              <button type="button" class="notes-fmt-btn" data-fmt="bold" title="Bold" aria-label="Bold">
+                <strong>B</strong>
+              </button>
+              <button type="button" class="notes-fmt-btn" data-fmt="italic" title="Italic" aria-label="Italic">
+                <em>I</em>
+              </button>
+              <button type="button" class="notes-fmt-btn" data-fmt="code" title="Inline code" aria-label="Inline code">
+                &lt;&gt;
+              </button>
+              <span class="notes-toolbar-sep" aria-hidden="true"></span>
+              <button type="button" class="notes-fmt-btn" data-fmt="h1" title="Heading 1" aria-label="Heading 1">
+                H1
+              </button>
+              <button type="button" class="notes-fmt-btn" data-fmt="h2" title="Heading 2" aria-label="Heading 2">
+                H2
+              </button>
+              <button type="button" class="notes-fmt-btn" data-fmt="h3" title="Heading 3" aria-label="Heading 3">
+                H3
+              </button>
+              <span class="notes-toolbar-sep" aria-hidden="true"></span>
+              <button
+                type="button"
+                class="notes-fmt-btn"
+                data-fmt="bullet"
+                title="Bullet list"
+                aria-label="Bullet list"
+              >
+                • List
+              </button>
+              <button
+                type="button"
+                class="notes-fmt-btn"
+                data-fmt="numbered"
+                title="Numbered list"
+                aria-label="Numbered list"
+              >
+                1. List
+              </button>
+              <button
+                type="button"
+                class="notes-fmt-btn"
+                data-fmt="quote"
+                title="Quote"
+                aria-label="Quote"
+              >
+                “ Quote
+              </button>
+              <span class="notes-toolbar-sep" aria-hidden="true"></span>
+              <button type="button" class="notes-fmt-btn" data-fmt="link" title="Link" aria-label="Insert link">
+                Link
+              </button>
+            </div>
+            <textarea
+              id="notes-editor"
+              class="notes-editor notes-editor-rich"
+              placeholder="Type notes here, or use the toolbar for bold, headings, lists…"
+              spellcheck="true"
+              aria-label="Session notes"
+            ></textarea>
+          </div>
+          <div id="notes-pane-preview" class="notes-pane hidden">
+            <div id="notes-preview" class="notes-preview markdown-body"></div>
+          </div>
+        </section>
+      </aside>
+    </div>
+
+    <footer class="footer">
+      <span>MSI Library + local KB</span>
+      <span class="footer-sep">·</span>
+      <span>ServiceNow-style knowledge search (demo)</span>
+    </footer>
+
+    <div
+      id="app-dialog"
+      class="app-dialog hidden"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="app-dialog-title"
+      aria-describedby="app-dialog-message"
+    >
+      <div class="app-dialog-backdrop" tabindex="-1" aria-hidden="true"></div>
+      <div class="app-dialog-panel">
+        <h2 id="app-dialog-title" class="app-dialog-title"></h2>
+        <p id="app-dialog-message" class="app-dialog-message"></p>
+        <div id="app-dialog-field" class="app-dialog-field hidden">
+          <label id="app-dialog-label" class="app-dialog-label" for="app-dialog-input"></label>
+          <input type="text" id="app-dialog-input" class="app-dialog-input" autocomplete="off" />
+        </div>
+        <div class="app-dialog-actions">
+          <button type="button" id="app-dialog-cancel" class="btn btn-ghost btn-sm">Cancel</button>
+          <button type="button" id="app-dialog-confirm" class="btn btn-primary btn-sm">Confirm</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="/static/api-client.js?v=1"></script>
+    <script src="/static/modal.js?v=1"></script>
+    <script src="/static/sidebar.js?v=10"></script>
+    <script src="/static/app.js?v=20"></script>
+    <script src="/static/voice.js?v=6"></script>
+  </body>
+</html>

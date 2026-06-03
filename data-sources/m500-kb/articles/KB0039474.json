@@ -1,0 +1,27 @@
+{
+  "kb_number": "KB0039474",
+  "title": "Mobile Video - SVX - SVX will not connect to the Smart Control Suite on PC",
+  "product": "M500",
+  "tags": [
+    "Mobile Video",
+    "Bodyworn",
+    "SVX",
+    "Smart Control",
+    "Smart Control Suite",
+    "Smart Dock",
+    "USB-C",
+    "USB 3.1",
+    "USB 3.2",
+    "PC",
+    "Docked camera",
+    "Upload",
+    "Video Manager",
+    "CC Dems",
+    "Connectivity",
+    "Troubleshooting",
+    "1-800-MSI-HELP"
+  ],
+  "summary": "SVX not recognized as docked in Smart Control on PC—use USB-C Gen 3.1+ directly (not Smart Dock), verify USB 3.x ports, swap cables, and confirm Smart Control upload configuration.",
+  "body": "Article metadata. Created on: 2025-12-29 08:05:20. Updated on: 2026-03-10 17:30:34. Views: 62. Product Categories — Tier 1: Mobile Video; Tier 2: Bodyworn; Tier 3: SVX; Tier 4: SVX. Visible to: Guest, Customer, Internal, Partner.\n\nTopic/Objective\nThe user may be experiencing issues with having Smart Control recognize a \"docked\" camera when connected to the PC using a USB-C port.\n\nBackground/Details\nRecommended to use a USB-C cable using generation 3.2, but generation 3.1 is required.\n\nOutcome/Recommendation — Troubleshooting\n1. Make sure the USB-C is securely connected to a working USB port on the computer. Make sure that the USB port supports USB version 3.X. If unsure if supported, you may need to contact your agency IT or computer manufacturer to know which ports support version 3.X. Typically, on your USB for 3.X, the port color on the inside will be blue in color vs the white/black of a 2.0 USB.\n2. Make sure we are not using the Smart Dock if we are trying to connect to the Smart Control App on PC. The only way the SVX can upload through Smart Control is by using the USB-C connection.\n3. If, when connecting your USB-C cable to your SVX and the camera begins charging but you do not have the option to upload from Smart Control, your cable may not support generation 3.1 or higher. Try swapping with a known working cable and see if that resolves the issue.\n4. Your Smart Control may not be configured correctly for upload to Video Manager / CC Dems. Please contact technical support at 1-800-MSI-HELP.",
+  "permalink": "https://cmsosnow.service-now.com/kb?id=kb_article_view&sysparm_article=KB0039474"
+}

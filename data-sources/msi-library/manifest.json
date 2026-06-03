@@ -1,0 +1,229 @@
+{
+  "product": "M500, SVX",
+  "source": "Motorola Solutions MSI Library (public documentation)",
+  "manuals": [
+    {
+      "id": "m500-user-guide",
+      "title": "M500 In-Car Video System User Guide",
+      "filename": "M500_User_Guide.pdf",
+      "summary": "Day-to-day operation, menus, status screens, and user-facing troubleshooting for the M500 DVR.",
+      "tags": [
+        "M500",
+        "user guide",
+        "operation",
+        "menus",
+        "status"
+      ],
+      "source_url": "https://docs-be.motorolasolutions.com/bundle/86175/preprocessedpdf/enus"
+    },
+    {
+      "id": "m500-installation-guide",
+      "title": "M500 Installation Guide",
+      "filename": "M500_Installation_Guide.pdf",
+      "summary": "Mounting, wiring, power, and initial installation checks for the M500 in-vehicle system.",
+      "tags": [
+        "M500",
+        "installation",
+        "wiring",
+        "mounting",
+        "power"
+      ],
+      "source_url": "https://docs-be.motorolasolutions.com/bundle/86174/preprocessedpdf/enus"
+    },
+    {
+      "id": "m500-administrator-guide",
+      "title": "M500 and VideoManager Explained",
+      "filename": "M500_Administrator_Guide.pdf",
+      "summary": "Configuration, VideoManager workflow, users, groups, and fleet administration for the M500.",
+      "tags": [
+        "M500",
+        "configuration",
+        "VideoManager",
+        "network",
+        "admin"
+      ],
+      "source_url": "https://docs-be.motorolasolutions.com/bundle/86176/preprocessedpdf/enus"
+    },
+    {
+      "id": "svx-92122",
+      "title": "SVX UL Approvals",
+      "filename": "SVX_UL_Approvals.pdf",
+      "summary": "UL Approvals SVX Product Listing for Use in Hazardous (Classified) Locations",
+      "tags": [
+        "SVX",
+        "MSI Library",
+        "body camera",
+        "VRSM"
+      ],
+      "source_url": "https://docs-be.motorolasolutions.com/bundle/92122/preprocessedpdf/enus"
+    },
+    {
+      "id": "svx-90324",
+      "title": "SVX Video Remote Speaker Microphone User Guide",
+      "filename": "SVX_Video_Remote_Speaker_Microphone_User_Guide.pdf",
+      "summary": "This manual provides basic operation information, software features information, and procedures on software-related features for SVX Video Remote Speaker Microphone.",
+      "tags": [
+        "SVX",
+        "MSI Library",
+        "body camera",
+        "VRSM"
+      ],
+      "source_url": "https://docs-be.motorolasolutions.com/bundle/90324/preprocessedpdf/enus"
+    },
+    {
+      "id": "svx-90325",
+      "title": "SVX Video Remote Speaker Microphone Quick Start Guide",
+      "filename": "SVX_Video_Remote_Speaker_Microphone_Quick_Start_Guide.pdf",
+      "summary": "This manual provides basic procedure to quick start the SVX device and to learn basic operation of the device.",
+      "tags": [
+        "SVX",
+        "MSI Library",
+        "body camera",
+        "VRSM"
+      ],
+      "source_url": "https://docs-be.motorolasolutions.com/bundle/90325/preprocessedpdf/enus"
+    },
+    {
+      "id": "svx-90258",
+      "title": "SVX Smart Dock PMPN5021_ Quick Start Guide",
+      "filename": "SVX_Smart_Dock_PMPN5021__Quick_Start_Guide.pdf",
+      "summary": "Contains the compressed user operating instructions for the charger. Applicable for PMPN5021.",
+      "tags": [
+        "SVX",
+        "MSI Library",
+        "body camera",
+        "VRSM"
+      ],
+      "source_url": "https://docs-be.motorolasolutions.com/bundle/90258/preprocessedpdf/enus"
+    },
+    {
+      "id": "svx-90259",
+      "title": "SVX Smart Dock PMPN5021_ Safety Leaflet",
+      "filename": "SVX_Smart_Dock_PMPN5021__Safety_Leaflet.pdf",
+      "summary": "Contains the safety information for the charger. Applicable for PMPN5021.",
+      "tags": [
+        "SVX",
+        "MSI Library",
+        "body camera",
+        "VRSM"
+      ],
+      "source_url": "https://docs-be.motorolasolutions.com/bundle/90259/preprocessedpdf/enus"
+    },
+    {
+      "id": "svx-90260",
+      "title": "Multi-Unit Battery Charger Safety Leaflet",
+      "filename": "Multi-Unit_Battery_Charger_Safety_Leaflet.pdf",
+      "summary": "Describes the safety information for the SVX Multi-Unit Battery Charger.",
+      "tags": [
+        "SVX",
+        "MSI Library",
+        "body camera",
+        "VRSM"
+      ],
+      "source_url": "https://docs-be.motorolasolutions.com/bundle/90260/preprocessedpdf/enus"
+    },
+    {
+      "id": "svx-90257",
+      "title": "SVX Smart Dock PMPN5021 User Guide",
+      "filename": "SVX_Smart_Dock_PMPN5021_User_Guide.pdf",
+      "summary": "Contains the user operating instructions for charger. Applicable for PMPN5021.",
+      "tags": [
+        "SVX",
+        "MSI Library",
+        "body camera",
+        "VRSM"
+      ],
+      "source_url": "https://docs-be.motorolasolutions.com/bundle/90257/preprocessedpdf/enus"
+    },
+    {
+      "id": "svx-90256",
+      "title": "Multi-Unit Charger PMPN4686_ User Guide",
+      "filename": "Multi-Unit_Charger_PMPN4686__User_Guide.pdf",
+      "summary": "Contains user operating procedures for the multi-unit charger. Applicable for: PMPN4686.",
+      "tags": [
+        "SVX",
+        "MSI Library",
+        "body camera",
+        "VRSM"
+      ],
+      "source_url": "https://docs-be.motorolasolutions.com/bundle/90256/preprocessedpdf/enus"
+    },
+    {
+      "id": "bc-baas",
+      "title": "BC BAAS",
+      "filename": "BC_BAAS.pdf",
+      "summary": "Local MSI manual: BC BAAS.",
+      "tags": [
+        "MSI Library",
+        "local",
+        "BAAS"
+      ],
+      "source_url": ""
+    },
+    {
+      "id": "mn010838a01-aa",
+      "title": "Multi-Unit Battery Charger PMPN4686 User Guide",
+      "filename": "MN010838A01-AA_multilingual_Multi-Unit_Battery_Charger_PMPN4686_User_Guide.pdf",
+      "summary": "Local MSI manual: Multi-Unit Battery Charger PMPN4686 User Guide.",
+      "tags": [
+        "MSI Library",
+        "local",
+        "SVX",
+        "M500",
+        "charger"
+      ],
+      "source_url": ""
+    },
+    {
+      "id": "mn011006a01-aa",
+      "title": "SVX Smart Dock PMPN5021 User Guide",
+      "filename": "MN011006A01-AA_multilingual_SVX_Smart_Dock_PMPN5021_User_Guide.pdf",
+      "summary": "Local MSI manual: SVX Smart Dock PMPN5021 User Guide.",
+      "tags": [
+        "MSI Library",
+        "local",
+        "SVX",
+        "M500",
+        "charger"
+      ],
+      "source_url": ""
+    },
+    {
+      "id": "mn011249a01-ac",
+      "title": "SVX Video Remote Speaker Microphone Quick Start Guide",
+      "filename": "MN011249A01-AC_multilingual_SVX_Video_Remote_Speaker_Microphone_Quick_Start_Guide.pdf",
+      "summary": "Local MSI manual: SVX Video Remote Speaker Microphone Quick Start Guide.",
+      "tags": [
+        "MSI Library",
+        "local",
+        "SVX",
+        "M500"
+      ],
+      "source_url": ""
+    },
+    {
+      "id": "mn011250a01-ae",
+      "title": "SVX Video Remote Speaker Microphone User Guide",
+      "filename": "MN011250A01-AE_enus_SVX_Video_Remote_Speaker_Microphone_User_Guide.pdf",
+      "summary": "Local MSI manual: SVX Video Remote Speaker Microphone User Guide.",
+      "tags": [
+        "MSI Library",
+        "local",
+        "SVX",
+        "M500"
+      ],
+      "source_url": ""
+    },
+    {
+      "id": "mtn-0051-26",
+      "title": "MTN-0051-26",
+      "filename": "MTN-0051-26.pdf",
+      "summary": "Local MSI manual: MTN-0051-26.",
+      "tags": [
+        "MSI Library",
+        "local"
+      ],
+      "source_url": ""
+    }
+  ]
+}

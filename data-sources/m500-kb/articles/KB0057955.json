@@ -1,0 +1,22 @@
+{
+  "kb_number": "KB0057955",
+  "title": "Mobile Video - ICV - M500 - M500 powers down during startup.",
+  "product": "M500",
+  "tags": [
+    "Mobile Video",
+    "ICV",
+    "M500",
+    "DVR",
+    "In-Car Video",
+    "Power Issues",
+    "Startup Shutdown",
+    "Supercaps",
+    "Battery Wiring",
+    "PowerProc Service Error",
+    "Trigger Harness WGP02852-F",
+    "Troubleshooting"
+  ],
+  "summary": "Addresses an issue where the M500 DVR powers down during startup or vehicle ignition due to insufficient power distribution, recommending direct wiring to the vehicle's main battery and hardware checks.",
+  "body": "Mobile Video - ICV - M500 - M500 powers down during startup. Article metadata. This article was created  Created on: 2025-10-29 13:39:43 This article was updated •  Updated on: 2026-03-10 17:30:38 This article has 81 views. •  81 Views Product Categories • Tier 1: Mobile Video • Tier 2: In-Car Video • Tier 3: M500 • Tier 4: M500 DVR Visible to • Guest • Customer • Internal • Partner Topic/Objective Insufficient power to the M500 causes the device to power down. Scope/Context M500 In-Car DVR System. Background/Details  The M500 powers down randomly. The M500 powers down when the shutdown timer is active and the vehicle starts up.  Outcome/Recommendation The M500 does not receive sufficient power, causing the device to switch to supercaps for a graceful shutdown to protect itself from potential damage. Power Not Run Directly to Vehicle Main Battery: When the M500 power cable is not connected directly to the vehicle's main battery but instead to a power circuit board, relay, or breaker, the M500 may not receive consistent power. This can lead to power dips, forcing the system to switch to supercaps for shutdown.From State Capture, PowerProc logs will often show the following error: \"0001c60000012d72 2025-09-29T11:10:41.554432-0500 m500-main-2 PowerProcService:7566(ServiceRunner)  [PP] Context.cc:895 operator():System running on supercaps.\" Ensure the M500 power cable is connected directly to the main battery and not to an alternative source. Factory power harnesses in some vehicles are wired to a power distribution computer. When the M500 is powered on with the ignition off and the ignition is then turned on, the computer prioritizes voltage to the starter and other vehicle components. Wiring the M500 directly to the battery prevents this issue. If the issue persists, perform the following checks:Inspect the power cable and replace it if necessary. Check the input cable and consider replacing the trigger harness/input cable (WGP02852-F). Swap the DVR to determine if the issue is related to the DVR itself, such as a faulty power port. Test another known working M500 DVR in the vehicle. If the replacement DVR works, the original DVR may be faulty and require replacement. Upgrade the firmware if the device is running an older version. If the issue continues, retrieve a State Capture from the M500 and contact Technical Support at 1800-MSI-Help (Mobile Video). The State Capture will help diagnose the root cause of the problem.",
+  "permalink": "https://cmsosnow.service-now.com/kb?id=kb_article_view&sysparm_article=KB0057955"
+}

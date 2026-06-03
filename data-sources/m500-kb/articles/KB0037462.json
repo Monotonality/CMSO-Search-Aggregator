@@ -1,0 +1,15 @@
+{
+  "kb_number": "KB0037462",
+  "title": "M500 Device Showing Invalid Serial Number (INVL-0000)",
+  "product": "M500",
+  "tags": [
+    "M500",
+    "INVL-0000",
+    "invalid serial",
+    "serial number",
+    "Mobile Video"
+  ],
+  "summary": "M500 reports invalid serial number INVL-0000.",
+  "body": "Created on: 2025-04-25 09:51:18 This article was updated • Updated on: 2025-04-25 17:53:50 This article has 54 views. • 54 Views Product Categories • Tier 1: Mobile Video • Tier 2: In-Car Video • Tier 3: M500 • Tier 4: M500 DVR Visible to • Guest • Customer • Internal • Partner Symptom(s) M500 may not be successfully configured at all M500 may display error 0120 M500 will not upload Issue - The M500 device had an invalid serial number (INVL-0000). Environment - Product: M500 - Firmware Version: Any Resolution 1. Confirm the issue of the invalid serial number on the M500 device. You can view the M500 serial number by navigating to Home > Status > System > System Serial Number on the M500 display. Correct M500 serials will begin with M500- or M505- if you see a serial number begin with INVL proceed to next steps. 2. M500s that produce the INVL serial number will need to be returned for replacement. Process an RMA request for any defective M500 devices with the invalid serial number using the serial found on the bottom of the DVR or packaging instead of the invalid serial.",
+  "permalink": "https://cmsosnow.service-now.com/kb?id=kb_article_view&sysparm_article=KB0037462"
+}

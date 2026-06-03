@@ -1,0 +1,20 @@
+{
+  "kb_number": "KB0049365",
+  "title": "Mobile Video - VMEX - M500 - How to update M500 with replacement unit",
+  "product": "M500",
+  "tags": [
+    "Mobile Video",
+    "VMEX",
+    "M500",
+    "DVR",
+    "In-Car Video",
+    "Replacement Unit",
+    "Serial Number Error",
+    "Cloud API Error 500",
+    "Configuration Update",
+    "Network Connection Troubleshooting"
+  ],
+  "summary": "A guide to resolving network connection and event upload issues on a replacement M500 unit by clearing and updating the mismatched serial number in the VMEX configuration file.",
+  "body": "Created on: 2025-08-26 08:58:20 This article was updated • Updated on: 2025-08-29 19:14:36 This article has 58 views. • 58 Views Product Categories • Tier 1: Mobile Video • Tier 2: In-Car Video • Tier 3: M500 • Tier 4: M500 DVR Visible to • Guest • Customer • Internal • Partner Topic/Objective Replacement M500 not connecting to network Scope/Context Product: M500 Version: VMEX Background/Details If a replacement M500 uses the configuration file from a previous unit, you often see the following error in the state capture logs \"Cloud API Error 500: Serial number not found or in use\". This will prevent the M500 from uploading events. Outcome/Recommendation Identify the serial number of replacement M500. Remote into VMEX and identify the current serial number listed on the configuration file that the unit is configured to. If the serial number does not match, clear the serial number from the configuration on the VMEX dashboard by clicking the car icon on top right hand corner of page. Ensure the M500 updates its configuration with the correct serial number. Verify that the M500 successfully connects to the network and begins uploading events.",
+  "permalink": "https://cmsosnow.service-now.com/kb?id=kb_article_view&sysparm_article=KB0049365"
+}

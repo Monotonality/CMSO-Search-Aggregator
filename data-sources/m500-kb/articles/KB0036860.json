@@ -1,0 +1,20 @@
+{
+  "kb_number": "KB0036860",
+  "title": "Mobile Video - ICV - M500 - How To Resolve Calibration Issues on the M500 Touchscreen Display",
+  "product": "M500",
+  "tags": [
+    "Mobile Video",
+    "M500",
+    "DVR",
+    "In-Car Video",
+    "Touchscreen Display",
+    "Calibration Issue",
+    "Hardware Replacement",
+    "Display Cable WGP02855-001",
+    "Display Unit WGA00675",
+    "Firmware 25.1.1.12"
+  ],
+  "summary": "Explains how to resolve M500 touchscreen calibration issues by powering down the system and swapping the faulty display with a known working unit while ensuring proper cable connections.",
+  "body": "Created on: 2025-04-07 11:19:16 This article was updated •  Updated on: 2025-04-07 19:14:42 This article has 22 views. •  22 Views Product Categories • Tier 1: Mobile Video • Tier 2: In-Car Video • Tier 3: M500 • Tier 4: M500 DVR Visible to • Guest • Customer • Internal • Partner Issue - The M500 touchscreen display does not have an option for recalibration. - Calibration issues were reported on the display, requiring investigation into potential solutions. - The problem was resolved by swapping the display with a known working unit and verifying connections. Environment - Product: M500 - Firmware Version: 25.1.1.12 Resolution 1. Power down the M500 unit as its components are not hot-swappable. 2. Replace the M500 display with a known working unit. 3. Verify the connection between the display (WGA00675)  and the DVR using the correct cable (WGP02855-001) 4. Confirm the resolution of the calibration issue after swapping the display.",
+  "permalink": "https://cmsosnow.service-now.com/kb?id=kb_article_view&sysparm_article=KB0036860"
+}

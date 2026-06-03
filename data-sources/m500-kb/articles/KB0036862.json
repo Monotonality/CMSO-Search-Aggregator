@@ -1,0 +1,19 @@
+{
+  "kb_number": "KB0036862",
+  "title": "Mobile Video - ICV - M500 - How To Set Up a Work Bench to Troubleshoot M500 DVRs Outside Vehicles",
+  "product": "M500",
+  "tags": [
+    "Mobile Video",
+    "M500",
+    "DVR",
+    "In-Car Video",
+    "Power Setup",
+    "Work Bench Testing",
+    "Troubleshooting",
+    "AC/DC Power Harness",
+    "Part Number WGP03274-KIT"
+  ],
+  "summary": "Outlines the steps to configure a work bench testing environment for the M500 DVR using an AC/DC power harness (Part Number: WGP03274-KIT).",
+  "body": "Created on: 2025-04-07 11:56:45 This article was updated •  Updated on: 2025-04-08 17:27:43 This article has 32 views. •  32 Views Product Categories • Tier 1: Mobile Video • Tier 2: In-Car Video • Tier 3: M500 • Tier 4: M500 DVR Visible to • Guest • Customer • Internal • Partner Issue - The M500 DVR requires a specific power setup for troubleshooting outside vehicles. - The customer requested guidance on configuring a work bench to power the M500 DVR for testing purposes. Environment - Product: M500 DVR - Category: In-Car Video Resolution 1. Obtain an AC/DC power harness designed for the M500 DVR by contacting the parts/repairs team at 1800-605-6734 option 2.  Part number for AC/DC power harness: WGP03274-KIT 2. Connect the AC/DC power harness to the M500 DVR. 3. Ensure the power harness is plugged into a compatible power source. 4. Verify that the DVR powers on successfully for testing.",
+  "permalink": "https://cmsosnow.service-now.com/kb?id=kb_article_view&sysparm_article=KB0036862"
+}
