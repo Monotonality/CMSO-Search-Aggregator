@@ -1,0 +1,431 @@
+:root {
+  --radius: 8px;
+  --font: "Segoe UI", system-ui, sans-serif;
+}
+
+/* Dark (default) */
+:root,
+[data-theme="dark"] {
+  --bg: #0f1419;
+  --panel: #1a2332;
+  --border: #2d3a4d;
+  --text: #e8eef4;
+  --muted: #8fa3b8;
+  --accent: #3d8fd4;
+  --accent-hover: #5aa3e0;
+  --accent-text: #fff;
+  --ok: #3d9a6a;
+  --input-bg: #0f1419;
+  --danger-hover: rgba(248, 113, 113, 0.12);
+}
+
+[data-theme="light"] {
+  --bg: #f4f6f9;
+  --panel: #ffffff;
+  --border: #c5d0dc;
+  --text: #1a2332;
+  --muted: #5a6b7d;
+  --accent: #2563eb;
+  --accent-hover: #1d4ed8;
+  --accent-text: #fff;
+  --ok: #15803d;
+  --input-bg: #f8fafc;
+  --danger-hover: rgba(220, 38, 38, 0.1);
+}
+
+[data-theme="ocean"] {
+  --bg: #0a1628;
+  --panel: #122a45;
+  --border: #1e4976;
+  --text: #dce9f5;
+  --muted: #7eb3d8;
+  --accent: #22a8c9;
+  --accent-hover: #2ec4e8;
+  --accent-text: #042033;
+  --ok: #2dd4a8;
+  --input-bg: #081220;
+  --danger-hover: rgba(251, 113, 133, 0.15);
+}
+
+[data-theme="warm"] {
+  --bg: #f5f0e8;
+  --panel: #fffdf8;
+  --border: #d4c4a8;
+  --text: #3d3428;
+  --muted: #7a6b56;
+  --accent: #b45309;
+  --accent-hover: #92400e;
+  --accent-text: #fff;
+  --ok: #4d7c0f;
+  --input-bg: #faf6ef;
+  --danger-hover: rgba(185, 28, 28, 0.1);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  font-family: var(--font);
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--bg);
+}
+
+.nf-header {
+  padding: 1.25rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--panel);
+}
+
+.nf-header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  margin-bottom: 0.35rem;
+}
+
+.nf-header h1 {
+  margin: 0;
+  font-size: 1.35rem;
+  font-weight: 600;
+}
+
+.nf-theme-wrap {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.nf-theme-label {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+.nf-theme-select {
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--text);
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.6rem;
+  cursor: pointer;
+}
+
+.nf-header p {
+  margin: 0;
+  color: var(--muted);
+  max-width: 52rem;
+  font-size: 0.9rem;
+}
+
+.nf-layout {
+  display: grid;
+  grid-template-columns: minmax(280px, 1fr) minmax(320px, 1.2fr) minmax(280px, 1fr);
+  gap: 1rem;
+  padding: 1rem 1.5rem 2rem;
+  align-items: start;
+}
+
+@media (max-width: 1100px) {
+  .nf-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+.nf-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1rem 1.1rem;
+}
+
+.nf-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.nf-panel h2 {
+  margin: 0;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+.nf-label {
+  display: block;
+  font-size: 0.8rem;
+  color: var(--muted);
+  margin-bottom: 0.35rem;
+}
+
+.nf-paste,
+.nf-export-preview,
+.nf-select {
+  width: 100%;
+  font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+  font-size: 0.82rem;
+  color: var(--text);
+  background: var(--input-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.75rem;
+  resize: vertical;
+}
+
+.nf-paste:focus,
+.nf-export-preview:focus,
+.nf-select:focus,
+.nf-field-input:focus,
+.nf-field-label-input:focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 1px;
+}
+
+.nf-select {
+  font-family: var(--font);
+  margin-bottom: 0.65rem;
+}
+
+.nf-check {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-size: 0.85rem;
+  color: var(--muted);
+  margin-bottom: 0.65rem;
+  cursor: pointer;
+}
+
+.nf-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.65rem;
+}
+
+.nf-btn {
+  font: inherit;
+  font-size: 0.85rem;
+  padding: 0.45rem 0.85rem;
+  border-radius: var(--radius);
+  border: 1px solid transparent;
+  cursor: pointer;
+  background: var(--border);
+  color: var(--text);
+}
+
+.nf-btn:hover {
+  filter: brightness(1.08);
+}
+
+.nf-btn-primary {
+  background: var(--accent);
+  color: var(--accent-text);
+}
+
+.nf-btn-primary:hover {
+  background: var(--accent-hover);
+}
+
+.nf-btn-secondary {
+  background: transparent;
+  border-color: var(--border);
+}
+
+.nf-btn-ghost {
+  background: transparent;
+  color: var(--muted);
+  padding: 0.35rem 0.6rem;
+}
+
+.nf-btn-icon {
+  padding: 0.25rem 0.5rem;
+  font-size: 1rem;
+  line-height: 1;
+  color: var(--muted);
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  border-radius: 4px;
+}
+
+.nf-btn-icon:hover {
+  color: #f87171;
+  background: var(--danger-hover);
+}
+
+.nf-status {
+  margin: 0.5rem 0 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+  min-height: 1.2em;
+}
+
+.nf-status.is-ok {
+  color: var(--ok);
+}
+
+.nf-status.is-error {
+  color: #f87171;
+}
+
+.nf-hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.nf-fields {
+  display: flex;
+  flex-direction: column;
+  gap: 0.85rem;
+}
+
+.nf-fields:not(:empty) + .nf-hint {
+  display: none;
+}
+
+.nf-field {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.65rem 0.75rem;
+  background: var(--input-bg);
+}
+
+.nf-field-head {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  margin-bottom: 0.4rem;
+}
+
+.nf-field-label-input {
+  flex: 1;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--accent);
+  background: transparent;
+  border: 1px dashed transparent;
+  border-radius: 4px;
+  padding: 0.2rem 0.35rem;
+}
+
+.nf-field-label-input:hover,
+.nf-field-label-input:focus {
+  border-color: var(--border);
+  background: var(--panel);
+}
+
+.nf-field-input {
+  width: 100%;
+  font: inherit;
+  font-size: 0.9rem;
+  color: var(--text);
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.5rem 0.65rem;
+  resize: vertical;
+  min-height: 2.25rem;
+}
+
+.nf-field-input.textarea {
+  min-height: 4.5rem;
+  font-family: inherit;
+}
+
+.nf-field-meta {
+  font-size: 0.72rem;
+  color: var(--muted);
+  margin-top: 0.25rem;
+}
+
+.nf-templates {
+  margin-top: 1.25rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
+}
+
+.nf-templates-title {
+  margin: 0 0 0.35rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.nf-templates-hint {
+  margin-bottom: 0.75rem;
+  font-size: 0.82rem;
+}
+
+.nf-templates-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  max-height: 22rem;
+  overflow-y: auto;
+  padding-right: 0.25rem;
+}
+
+.nf-template-card {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 0.6rem 0.7rem;
+  background: var(--input-bg);
+}
+
+.nf-template-card-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+
+.nf-template-card-title {
+  margin: 0;
+  font-size: 0.88rem;
+  font-weight: 600;
+}
+
+.nf-template-card-desc {
+  margin: 0.15rem 0 0;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.nf-template-preview {
+  margin: 0 0 0.5rem;
+  padding: 0.45rem 0.5rem;
+  font-family: ui-monospace, Consolas, monospace;
+  font-size: 0.7rem;
+  line-height: 1.35;
+  color: var(--muted);
+  background: var(--panel);
+  border-radius: 4px;
+  white-space: pre-wrap;
+  max-height: 4.5rem;
+  overflow: hidden;
+}
+
+.nf-template-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+}
+
+.nf-template-actions .nf-btn {
+  font-size: 0.78rem;
+  padding: 0.3rem 0.55rem;
+}

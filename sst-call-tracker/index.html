@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SST Call Time Tracker</title>
+    <link rel="stylesheet" href="tracker.css" />
+  </head>
+  <body>
+    <header class="ct-header">
+      <div class="ct-header-top">
+        <div>
+          <h1>SST Call Time Tracker</h1>
+          <p class="ct-tagline">
+            Mark what the technologist is doing during a live call to find slow points.
+          </p>
+        </div>
+        <div class="ct-theme-wrap">
+          <label class="ct-theme-label" for="theme-select">Theme</label>
+          <select id="theme-select" class="ct-theme-select" aria-label="Color theme">
+            <option value="dark">Dark</option>
+            <option value="light">Light</option>
+            <option value="system">System</option>
+          </select>
+        </div>
+      </div>
+      <div class="ct-session-meta">
+        <label class="ct-meta-label" for="session-label">Session label (optional)</label>
+        <input
+          type="text"
+          id="session-label"
+          class="ct-meta-input"
+          placeholder="e.g. INC12345, M500 no power"
+          autocomplete="off"
+        />
+      </div>
+    </header>
+
+    <main class="ct-main">
+      <section class="ct-panel ct-clock-panel" aria-labelledby="clock-heading">
+        <h2 id="clock-heading" class="ct-visually-hidden">Session clock</h2>
+        <p class="ct-elapsed" id="elapsed-display" aria-live="polite">00:00:00</p>
+        <p class="ct-current-wrap">
+          Now:
+          <strong id="current-activity-label">Not started</strong>
+        </p>
+        <div class="ct-session-actions">
+          <button type="button" id="btn-start" class="ct-btn ct-btn-primary">Start session</button>
+          <button type="button" id="btn-stop" class="ct-btn ct-btn-secondary" disabled>
+            End session
+          </button>
+          <button type="button" id="btn-reset" class="ct-btn ct-btn-ghost">Reset</button>
+        </div>
+        <p id="session-status" class="ct-status" aria-live="polite"></p>
+      </section>
+
+      <section class="ct-panel ct-activities-panel" aria-labelledby="activities-heading">
+        <div class="ct-panel-head">
+          <h2 id="activities-heading">What are they doing now?</h2>
+          <p class="ct-hint">Click when the activity changes. Time accrues to the previous task.</p>
+        </div>
+        <div id="activity-buttons" class="ct-activity-grid" role="group" aria-label="Activity markers"></div>
+        <div class="ct-custom-activity">
+          <input
+            type="text"
+            id="custom-activity-input"
+            class="ct-meta-input"
+            placeholder="Custom activity label"
+            maxlength="48"
+            disabled
+          />
+          <button type="button" id="btn-custom-activity" class="ct-btn ct-btn-secondary" disabled>
+            Mark custom
+          </button>
+        </div>
+      </section>
+
+      <section class="ct-panel ct-summary-panel" aria-labelledby="summary-heading">
+        <h2 id="summary-heading">Time by activity</h2>
+        <div id="pie-chart-wrap" class="ct-pie-wrap" hidden>
+          <svg
+            id="pie-chart"
+            class="ct-pie-chart"
+            viewBox="0 0 200 200"
+            role="img"
+            aria-labelledby="pie-chart-title"
+          >
+            <title id="pie-chart-title">Time by activity</title>
+            <g id="pie-slices" transform="translate(100,100)"></g>
+          </svg>
+          <ul id="pie-legend" class="ct-pie-legend"></ul>
+        </div>
+        <div id="summary-bars" class="ct-summary-bars"></div>
+        <table class="ct-summary-table" id="summary-table">
+          <thead>
+            <tr>
+              <th scope="col">Activity</th>
+              <th scope="col">Time</th>
+              <th scope="col">%</th>
+            </tr>
+          </thead>
+          <tbody id="summary-tbody"></tbody>
+        </table>
+        <p id="empty-summary" class="ct-hint">Start a session and mark activities to see breakdown.</p>
+      </section>
+
+      <section
+        id="timeline-panel"
+        class="ct-panel ct-timeline-panel"
+        aria-labelledby="timeline-heading"
+        hidden
+      >
+        <h2 id="timeline-heading">Call timeline</h2>
+        <p class="ct-timeline-hint">
+          Color blocks show when each activity happened (left = start of session).
+        </p>
+        <div id="timeline-wrap" class="ct-timeline-wrap">
+          <div class="ct-timeline-meta">
+            <span id="timeline-start-label"></span>
+            <span id="timeline-end-label"></span>
+          </div>
+          <div id="timeline-track" class="ct-timeline-track" role="list" aria-label="Activity timeline"></div>
+          <div id="timeline-axis" class="ct-timeline-axis"></div>
+          <ul id="timeline-list" class="ct-timeline-list"></ul>
+        </div>
+        <p id="empty-timeline" class="ct-hint">Mark activities during the session to build the timeline.</p>
+        <div class="ct-export-actions">
+          <button type="button" id="btn-export" class="ct-btn ct-btn-secondary" disabled>
+            Copy report
+          </button>
+          <button type="button" id="btn-download-txt" class="ct-btn ct-btn-secondary" disabled>
+            Download .txt
+          </button>
+          <button type="button" id="btn-download-csv" class="ct-btn ct-btn-secondary" disabled>
+            Download .csv
+          </button>
+        </div>
+      </section>
+    </main>
+
+    <script src="tracker.js"></script>
+  </body>
+</html>
