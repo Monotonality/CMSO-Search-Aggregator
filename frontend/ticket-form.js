@@ -2,20 +2,57 @@
  * Standalone ticket investigation form (not linked to sidebar notes editor).
  */
 (function () {
-  const DRAFT_KEY = "moto_ticket_form_draft_v1";
+  const DRAFT_KEY = "moto_ticket_form_draft_v2";
 
   const SECTIONS = [
-    { id: "field-ticket-id", label: "TICKET ID:" },
-    { id: "field-client-name", label: "CLIENT NAME:" },
-    { id: "field-client-agency", label: "CLIENT AGENCY:" },
-    { id: "field-reason", label: "REASON FOR TICKET:" },
-    { id: "field-symptoms", label: "SUSPECTED SYMPTOMS:" },
-    { id: "field-context", label: "CONTEXT:" },
-    { id: "field-actions", label: "ACTIONS TAKEN:" },
-    { id: "field-next", label: "NEXT STEPS:" },
+    { id: "field-priority", label: "Priority:", multiline: false },
+    { id: "field-inc-number", label: "INC Number:", multiline: false },
+    { id: "field-agency", label: "Agency:", multiline: false },
+    { id: "field-name", label: "Name:", multiline: false },
+    { id: "field-state", label: "State:", multiline: false },
+    { id: "field-software-version", label: "Software/Firmware Version:", multiline: false },
+    { id: "field-deployment-date", label: "Deployment Date:", multiline: false },
+    { id: "field-issue-description", label: "Initial Issue Description:", multiline: true },
+    { id: "field-ticket-history", label: "Customer Ticket History:", multiline: true },
+    { id: "field-incident-context", label: "Incident Context & Background:", multiline: true },
+    { id: "field-diagnostic-findings", label: "Diagnostic Findings:", multiline: true },
+    { id: "field-kb-utilization", label: "KB Utilization:", multiline: true },
+    { id: "field-actions-taken", label: "Actions Taken:", multiline: true },
+    { id: "field-next-steps", label: "Next Steps:", multiline: true },
+    { id: "field-closure-details", label: "Closure Details:", multiline: true },
   ];
 
   const statusEl = document.getElementById("tf-status");
+
+  function displayLabel(label) {
+    return label.replace(/:+$/, "");
+  }
+
+  function renderForm() {
+    const form = document.getElementById("ticket-form");
+    if (!form) return;
+    form.replaceChildren();
+    for (const { id, label, multiline } of SECTIONS) {
+      const wrap = document.createElement("div");
+      wrap.className = "tf-field";
+      const lbl = document.createElement("label");
+      lbl.htmlFor = id;
+      lbl.textContent = displayLabel(label);
+      wrap.appendChild(lbl);
+      let input;
+      if (multiline) {
+        input = document.createElement("textarea");
+        input.rows = 4;
+      } else {
+        input = document.createElement("input");
+        input.type = "text";
+        input.autocomplete = "off";
+      }
+      input.id = id;
+      wrap.appendChild(input);
+      form.appendChild(wrap);
+    }
+  }
 
   function setStatus(msg, kind) {
     if (!statusEl) return;
@@ -66,7 +103,7 @@
   function downloadTxt() {
     const text = buildText();
     const stamp = new Date().toISOString().slice(0, 19).replace(/[:T]/g, "-");
-    const ticket = getValue("field-ticket-id").replace(/[^\w-]+/g, "_") || "ticket";
+    const ticket = getValue("field-inc-number").replace(/[^\w-]+/g, "_") || "ticket";
     const filename = `ticket-notes-${ticket}-${stamp}.txt`;
     const blob = new Blob([text], { type: "text/plain;charset=utf-8" });
     const url = URL.createObjectURL(blob);
@@ -107,6 +144,8 @@
     saveDraft();
     window.close();
   });
+
+  renderForm();
 
   for (const { id } of SECTIONS) {
     document.getElementById(id)?.addEventListener("input", saveDraft);

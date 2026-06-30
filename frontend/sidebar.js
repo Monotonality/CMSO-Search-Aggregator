@@ -3,24 +3,27 @@
   const STORAGE_PINS = "moto_pinned_sources_v1";
   const STORAGE_NOTES = "moto_session_notes_v1";
   const notesStorage = () => window.sessionStorage;
-  const STORAGE_NOTES_TEMPLATE_USED = "moto_notes_template_used_v1";
+  const STORAGE_NOTES_TEMPLATE_USED = "moto_notes_template_used_v2";
 
-  const TICKET_NOTES_TEMPLATE = `TICKET ID:
+  const TICKET_NOTE_LABELS = [
+    "Priority:",
+    "INC Number:",
+    "Agency:",
+    "Name:",
+    "State:",
+    "Software/Firmware Version:",
+    "Deployment Date:",
+    "Initial Issue Description:",
+    "Customer Ticket History:",
+    "Incident Context & Background:",
+    "Diagnostic Findings:",
+    "KB Utilization:",
+    "Actions Taken:",
+    "Next Steps:",
+    "Closure Details:",
+  ];
 
-CLIENT NAME:
-
-CLIENT AGENCY:
-
-REASON FOR TICKET:
-
-SUSPECTED SYMPTOMS:
-
-CONTEXT:
-
-ACTIONS TAKEN:
-
-NEXT STEPS:
-`;
+  const TICKET_NOTES_TEMPLATE = TICKET_NOTE_LABELS.map((label) => `${label}\n\n`).join("").trimEnd() + "\n";
 
   const pinnedListEl = document.getElementById("pinned-list");
   const pinnedEmptyEl = document.getElementById("pinned-empty");
@@ -204,10 +207,24 @@ NEXT STEPS:
     }
   }
 
+  function isLegacyNotesTemplate(text) {
+    return text.includes("TICKET ID:") && text.includes("REASON FOR TICKET:");
+  }
+
+  function legacyTemplateHasNoContent(text) {
+    const stripped = text.replace(/^[A-Z][A-Z0-9\s/&]+:\s*$/gm, "").trim();
+    return !stripped;
+  }
+
   function loadNotes() {
     if (!notesEditorEl) return;
     try {
-      notesEditorEl.value = notesStorage().getItem(STORAGE_NOTES) || "";
+      let raw = notesStorage().getItem(STORAGE_NOTES) || "";
+      if (isLegacyNotesTemplate(raw) && legacyTemplateHasNoContent(raw)) {
+        raw = "";
+        notesStorage().removeItem(STORAGE_NOTES);
+      }
+      notesEditorEl.value = raw;
     } catch {
       notesEditorEl.value = "";
     }
@@ -221,7 +238,7 @@ NEXT STEPS:
 
   function focusTicketTemplateStart() {
     if (!notesEditorEl) return;
-    const marker = "TICKET ID:\n\n";
+    const marker = `${TICKET_NOTE_LABELS[0]}\n\n`;
     const pos = TICKET_NOTES_TEMPLATE.indexOf(marker);
     const start = pos >= 0 ? pos + marker.length : 0;
     notesEditorEl.focus();
@@ -245,7 +262,7 @@ NEXT STEPS:
   function notesContainTemplate() {
     if (!notesEditorEl) return false;
     const text = notesEditorEl.value;
-    return text.includes("TICKET ID:") && text.includes("REASON FOR TICKET:");
+    return text.includes("Priority:") && text.includes("Initial Issue Description:");
   }
 
   /** Block only when notes already contain the template (empty notes always allow a new ticket). */

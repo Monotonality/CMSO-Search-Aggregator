@@ -31,7 +31,7 @@ $RebuildScript = Join-Path $Root "scripts\rebuild_index.py"
 $AppUrl = "http://127.0.0.1:$Port/"
 
 function Write-Step([string]$n, [string]$msg) {
-    Write-Host "`n=== $n — $msg ===" -ForegroundColor Cyan
+    Write-Host "`n=== $n - $msg ===" -ForegroundColor Cyan
 }
 
 function Ensure-Venv {
@@ -101,7 +101,7 @@ function Test-OllamaModels {
         Write-Host "Ollama OK. Models: $($names -join ', ')"
         $hasPreferred = $names | Where-Object { $_ -like "$Preferred*" }
         if (-not $hasPreferred) {
-            Write-Host "  Voice default is $Preferred — pull if you want LLM query extraction." -ForegroundColor Yellow
+            Write-Host "  Voice default is $Preferred - pull if you want LLM query extraction." -ForegroundColor Yellow
         }
         return $true
     } catch {
@@ -114,7 +114,7 @@ function Ensure-Index {
         if ($RebuildIndex) {
             Write-Host "Rebuilding search index..."
         } else {
-            Write-Host "First run — building search index (may take a few minutes)..."
+            Write-Host "First run - building search index (may take a few minutes)..."
         }
         & $VenvPython $RebuildScript
     } else {
@@ -141,7 +141,7 @@ function Stop-PortListener([int]$listenPort) {
 
 # --- main ---
 Write-Host ""
-Write-Host "CMSO Signal — startup" -ForegroundColor Green
+Write-Host "CMSO Signal - startup" -ForegroundColor Green
 Write-Host "Project: $Root"
 
 Write-Step "1/5" "Python environment"
@@ -159,7 +159,7 @@ if ($NoOllama) {
     if (Try-StartOllama) {
         Test-OllamaModels -Preferred "gemma3:4b" | Out-Null
     } else {
-        Write-Host "Ollama not reachable — voice still works via rule-based extraction." -ForegroundColor Yellow
+        Write-Host "Ollama not reachable - voice still works via rule-based extraction." -ForegroundColor Yellow
         Write-Host "  Install/start Ollama, or re-run with -NoOllama to hide LLM warnings."
     }
 }
