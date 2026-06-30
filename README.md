@@ -1,32 +1,27 @@
-# CMSO Signal (M500 troubleshooting search — hackathon demo)
+# CMSO Signal
 
-Local **hybrid search** for M500 troubleshooting:
+**SIGNAL** — **S**earch **I**ntegrated **G**eneral **N**atural **A**utomatic **L**ookup.
 
-- **Full-text index** — SQLite FTS5 with BM25 ranking
-- **Semantic similarity** — local TF-IDF vectors (default, no generative AI download)
-- **Combined ranking** — weighted merge of text + vector scores; each result shows a **similarity %**
-- **Voice assist (optional)** — browser speech + **local Ollama** query extraction, with rule-based fallback
+Hackathon demo for **M500** troubleshooting. Data stays on disk: JSON articles in `data-sources/m500-kb/` and MSI manuals in `data-sources/msi-library/`.
 
-Data: JSON articles in `data-sources/m500-kb/` and MSI manuals in `data-sources/msi-library/` (manifest + optional PDFs).
+## Quick start
 
-## 2026 Hackathon AI compliance
+Double-click **`run.cmd`**, or from the project root:
 
-This project follows **`2026 Hackathon AI Guidance.md`**:
+```powershell
+.\scripts\start.ps1
+```
 
-| Area | Approach |
-|------|----------|
-| LLM tooling | **Ollama** only (local); no ChatGPT, DeepSeek, Qwen, cloud consumer AI, etc. |
-| Default voice model | `gemma3:4b` (Gemma family, ≤9B) — `ollama pull gemma3:4b` |
-| Search vectors | **TF-IDF** (scikit-learn, fully offline) |
-| Strict mode | `HACKATHON_STRICT=1` (default) blocks non-compliant Ollama models and FastEmbed |
-| Voice without Ollama | `scripts/start_backend_no_ollama.ps1` or `VOICE_USE_LLM=0` |
-| After the event | `scripts/hackathon_cleanup.ps1` — remove local Ollama models; use AI Hub / AI Eval if continuing |
+Opens **http://127.0.0.1:8001/** — creates the venv, installs deps, builds the index on first run, and optionally starts Ollama for voice assist.
 
-API: `GET /api/hackathon/compliance` and `model_compliance` on `GET /api/voice/status`.
+| Flag | Effect |
+|------|--------|
+| `-NoOllama` | Voice uses rule-based query extraction only |
+| `-RebuildIndex` | Force rebuild `data-sources/search_index.db` |
+| `-KillPort` | Free port 8001, then start |
+| `-NoBrowser` | Do not open a browser tab |
 
-Approved model families: **Llama, Mistral/Mixtral, Phi, Gemma**. Avoid cloud-tagged models (`*-cloud`), models &gt;9B, and community fine-tunes.
-
-## First-time setup
+## First-time setup (manual)
 
 ```powershell
 cd backend
@@ -36,76 +31,57 @@ pip install -r requirements.txt
 python ..\scripts\rebuild_index.py
 ```
 
-Optional voice LLM (local):
+Optional voice LLM: `ollama pull gemma3:4b`
 
-```powershell
-ollama pull gemma3:4b
-```
+## Features
 
-## Run (easiest)
+- **Hybrid search** — SQLite FTS5 (BM25) + local TF-IDF vectors, merged ranking with similarity %
+- **Search modes** — hybrid, keyword, semantic, generic
+- **Source filters** — KB articles and/or MSI library manuals
+- **Voice assist** — browser speech → search queries via local Ollama (rule-based fallback)
+- **Pinned results & ticket notes** — session sidebar with investigation template and ticket form popup
+- **PDF chunking** — manuals indexed by page-aware chunks (~350 words), not just titles
 
-Double-click **`run.cmd`** in the project folder, or:
+The index auto-rebuilds on startup when source files change. Force rebuild: `python scripts\rebuild_index.py` or `POST /api/index/rebuild`.
 
-```powershell
-.\scripts\start.ps1
-```
+## Hackathon AI compliance
 
-This script creates the venv and installs deps if needed, builds the search index on first run, tries to start Ollama, opens the browser, and runs the API on **http://127.0.0.1:8001/**.
+Follows **`2026 Hackathon AI Guidance.md`**. Summary:
 
-| Flag | Effect |
-|------|--------|
-| `-NoOllama` | Voice uses rule-based extraction only (no Ollama required) |
-| `-RebuildIndex` | Force rebuild `search_index.db` |
-| `-KillPort` | Stop whatever is listening on port 8001, then start fresh |
-| `-NoBrowser` | Do not open a browser tab |
+| Area | Approach |
+|------|----------|
+| LLM | **Ollama** only (local); approved families: Llama, Mistral/Mixtral, Phi, Gemma (≤9B) |
+| Default voice model | `gemma3:4b` |
+| Search vectors | **TF-IDF** (scikit-learn, offline) |
+| Strict mode | `HACKATHON_STRICT=1` (default) blocks non-compliant models and FastEmbed |
+| No Ollama | `.\scripts\start.ps1 -NoOllama` or `VOICE_USE_LLM=0` |
+| Post-event cleanup | `scripts/hackathon_cleanup.ps1` |
 
-Other entry points:
+Check runtime status: `GET /api/hackathon/compliance` and `GET /api/voice/status`.
 
-```powershell
-.\scripts\start.ps1 -NoOllama
-.\scripts\start_backend_no_ollama.ps1
-```
-
-The index auto-rebuilds on startup when source files change. Force rebuild:
-
-```powershell
-python scripts\rebuild_index.py
-# or POST http://127.0.0.1:8001/api/index/rebuild
-```
-
-## How search works
-
-| Layer | Technology | Role |
-|-------|------------|------|
-| Full-text | SQLite FTS5 (`porter` tokenizer) | Keyword / symptom terms, BM25 rank |
-| Semantic | TF-IDF (local sklearn) | Similar-case matching via cosine similarity |
-| Final rank | 35% text + 65% vector (default) | `score`; `similarity` is the raw vector cosine (0–1) |
-
-**MSI library PDFs** are sub-chunked during indexing (~350 words, overlapping windows, page-aware) so search can match text *inside* manuals, not just titles/summaries.
-
-Advanced (non-hackathon): set `HACKATHON_STRICT=0` and `USE_FASTEMBED=1` to try FastEmbed (`BAAI/bge-small-en-v1.5`).
+Advanced (non-hackathon): `HACKATHON_STRICT=0` and `USE_FASTEMBED=1` for FastEmbed (`BAAI/bge-small-en-v1.5`).
 
 ## API
 
 | Endpoint | Description |
 |----------|-------------|
-| `GET /api/search?q=...&min_similarity=0.2` | Hybrid search |
-| `GET /api/config` | Source + index stats + compliance summary |
-| `GET /api/hackathon/compliance` | Hackathon AI rules snapshot |
-| `POST /api/index/rebuild` | Rebuild FTS + embeddings |
-| `GET /api/voice/status` | Ollama + model compliance |
+| `GET /api/search?q=...&mode=hybrid&sources=kb,msi_library` | Hybrid search |
+| `GET /api/document/{doc_id}` | Full document for expand-in-place |
+| `GET /api/config` | Sources, index stats, compliance |
+| `GET /api/voice/status` | Ollama availability |
+| `POST /api/voice/process-segment` | Transcript → queries → search results |
 | `GET /api/manuals/{file}.pdf` | Serve local PDF |
+| `POST /api/index/rebuild` | Rebuild index |
 
 ## Scripts
 
 | Script | Purpose |
 |--------|---------|
+| `scripts/start.ps1` / `run.cmd` | Setup + run (canonical entry point) |
 | `scripts/rebuild_index.py` | Build FTS5 + vector index |
-| `scripts/start.ps1` / `run.cmd` | **One-command** setup + run |
-| `scripts/start_server.ps1` | Alias for `start.ps1` |
-| `scripts/run_all.ps1` | Alias for `start.ps1` |
-| `scripts/start_backend_no_ollama.ps1` | API without Ollama LLM |
-| `scripts/hackathon_cleanup.ps1` | Remove local Ollama models post-event |
 | `scripts/check_kb_json.py` | Validate article JSON |
-| `scripts/sanitize_for_json.py` | Escape pasted body text |
-| `scripts/new-kb-article.ps1` | Create stub article JSON |
+| `scripts/new-kb-article.ps1` | Create stub KB article |
+| `scripts/sanitize_for_json.py` | Escape pasted article body text |
+| `scripts/download_msi_pdfs.py` | Fetch MSI library PDFs |
+| `scripts/ingest_new_pdfs.py` | Copy PDFs from `New PDF/` into library |
+| `scripts/hackathon_cleanup.ps1` | Remove local Ollama models post-event |
